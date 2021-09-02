@@ -21,9 +21,9 @@ func PanicHandler(err error) {
 }
 
 func ValidationHelper(w http.ResponseWriter, cancel context.CancelFunc, err error) string {
-	errors := err.(validator.ValidationErrors)
-	defer cancel()
 	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		defer cancel()
 		for _, err := range errors {
 			return err.Error()
 		}

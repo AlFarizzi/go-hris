@@ -1,6 +1,8 @@
 package model
 
+import "database/sql"
+
 type Position struct {
-	Id_Position int
-	Position    string
+	Id_Position sql.NullInt64
+	Position    sql.NullString
 }

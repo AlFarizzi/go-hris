@@ -1,23 +1,23 @@
-{{define "tambah_karyawan"}}
+{{define "edit_karyawan"}}
 {{template "header"}}
-{{template "top-wrapper"}}
+    {{template "top-wrapper"}}
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Tambah Karyawan</h3>
             </div>
             <div class="card-body">
-                <form action="/post/karyawan/tambah" method="post">
+                <form action="/post/karyawan/edit" method="post">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Nama Depan</label>
-                                <input type="text" name="nama_depan" class="form-control" placeholder="Nama Depan">
+                                <input value="{{.User.NamaDepan}}" type="text" name="nama_depan" class="form-control" placeholder="Nama Depan">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Nama Belakang</label>
-                                <input type="text" name="nama_belakang" class="form-control" placeholder="Nama Belakang">
+                                <input value="{{.User.NamaBelakang.String}}" type="text" name="nama_belakang" class="form-control" placeholder="Nama Belakang">
                             </div>
                         </div>
                     </div>
@@ -25,21 +25,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control" placeholder="Username">
+                                <input value="{{.User.Username}}" type="text" name="username" class="form-control" placeholder="Username">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" placeholder="Email">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="" class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" placeholder="Password">
+                                <input value="{{.User.Email}}" type="email" name="email" class="form-control" placeholder="Email">
                             </div>
                         </div>
                     </div>
@@ -48,16 +40,19 @@
                             <div class="form-group">
                                 <label for="" class="form-label">Level</label>
                                 <select name="level" class="form-control">
+                                    <option value="0" selected>Pilih Level</option>
                                     <option value="super-admin">Super Admin</option>
                                     <option value="admin">Admin</option>
                                     <option value="karyawan">Karyawan</option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Jabatan</label>
                                 <select name="id_position" class="form-control">
+                                    <option value="0" selected>Pilih Jabatan</option>
                                     {{range $p := .Positions}}
                                         <option value="{{$p.Id_Position.Int64}}">{{$p.Position.String}}</option>
                                     {{end}}
@@ -65,12 +60,15 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" name="old_id_position" value="{{.User.Position.Id_Position.Int64}}">
+                    <input type="hidden" name="old_level" value="{{.User.Level}}">
+                    <input type="hidden" name="id_user" value="{{.User.Id_User}}">
                     <div class="form-group">
-                        <button class="btn btn-primary btn-sm">Tambah Karyawan</button>
+                        <button class="btn btn-primary btn-sm">Update Karyawan</button>
                     </div>
                 </form>
             </div>
         </div>
-{{template "bottom-wrapper"}}
+    {{template "bottom-wrapprt"}}
 {{template "footer"}}
 {{end}}

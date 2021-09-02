@@ -27,10 +27,11 @@
                                 <td>{{$user.NamaBelakang.String}}</td>
                                 <td>{{$user.Username}}</td>
                                 <td>{{$user.Email}}</td>
-                                <td>{{$user.Position}}</td>
+                                <td>{{$user.Position.Position.String}}</td>
                                 <td>{{$user.Level}}</td>
                                 <td>
                                     <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/karyawan/delete?id_user={{$user.Id_User}}" class="btn btn-danger btn-sm">Hapus</a>
+                                    <a href="/get/karyawan/edit?id_user={{$user.Id_User}}" class="btn btn-warning btn-sm text-white">Edit</a>
                                 </td>
                             </tr>
                         {{end}}

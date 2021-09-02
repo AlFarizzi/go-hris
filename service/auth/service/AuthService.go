@@ -11,7 +11,7 @@ import (
 
 func LoginService(usr *AuthModel.User, password *string) (*AuthModel.User, error) {
 	if usr != nil {
-		err := bcrypt.CompareHashAndPassword([]byte(usr.Password), []byte(*password))
+		err := bcrypt.CompareHashAndPassword([]byte(usr.Password.String), []byte(*password))
 		helper.PanicHandler(err)
 		fmt.Println("Berhasil Login")
 		return usr, nil
