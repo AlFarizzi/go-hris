@@ -1,0 +1,44 @@
+{{define "karyawan_dashboard"}}
+{{template "header"}}
+{{template "top-wrapper"}}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Data Karyawan</h3>
+            <a href="/get/karyawan/tambah" class="btn btn-primary btn-sm">Tambah Karyawan</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nama Depan</th>
+                            <th>Nama Belakang</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Posisi</th>
+                            <th>Level</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range $user := .Users}}
+                            <tr>
+                                <td>{{$user.NamaDepan}}</td>
+                                <td>{{$user.NamaBelakang.String}}</td>
+                                <td>{{$user.Username}}</td>
+                                <td>{{$user.Email}}</td>
+                                <td>{{$user.Position}}</td>
+                                <td>{{$user.Level}}</td>
+                                <td>
+                                    <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/karyawan/delete?id_user={{$user.Id_User}}" class="btn btn-danger btn-sm">Hapus</a>
+                                </td>
+                            </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{{template "bottom-wrapper"}}
+{{template "footer"}}
+{{end}}
