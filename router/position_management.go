@@ -6,7 +6,7 @@ import (
 	"go-hris/helper"
 	"go-hris/middleware"
 	"go-hris/model"
-	service "go-hris/service/position/repository"
+	PositionRepository "go-hris/service/position/repository"
 	"net/http"
 	"strconv"
 
@@ -18,7 +18,7 @@ var GetAllPosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	positions := positionImpl.GetAllPositions(context.Background())
 	helper.PositionViewParser(rw, "position_dashboard", map[string]interface{}{
 		"Positions": positions,
@@ -36,7 +36,7 @@ var PostTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Req
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	posisi := r.PostFormValue("posisi")
 	position := model.Position{Position: sql.NullString{String: posisi}}
 
@@ -60,7 +60,7 @@ var DeletePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	result := positionImpl.DeletePosisi(context.Background(), model.Position{Id_Position: sql.NullInt64{Int64: int64(id)}})
 
 	switch result {
@@ -77,7 +77,7 @@ var GetPositionMembers http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 
 	id_position, _ := strconv.Atoi(r.URL.Query().Get("id_position"))
 	position := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position)}}
@@ -93,7 +93,7 @@ var GetUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 	defer db.Close()
 
 	id_position, _ := strconv.Atoi(r.URL.Query().Get("id_position"))
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	pstn := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position)}}
 	position := positionImpl.GetPosition(context.Background(), pstn)
 
@@ -108,7 +108,7 @@ var PostUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	positionImpl := service.NewPositionRepositoryImpl(db)
+	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	position_input := r.PostFormValue("posisi")
 	id_position_input, _ := strconv.Atoi(r.PostFormValue("id_position"))
 	position := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position_input)}, Position: sql.NullString{String: position_input}}
