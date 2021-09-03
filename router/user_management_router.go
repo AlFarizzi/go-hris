@@ -21,10 +21,10 @@ import (
 var GetAllUsers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
-
+	defer db.Close()
 	userImpl := UserService.NewUserRepositoryImpl(db)
 
-	users := userImpl.GetAllUser(context.Background(), db)
+	users := userImpl.GetAllUser(context.Background())
 	helper.KaryawanViewParser(rw, "karyawan_dashboard", map[string]interface{}{
 		"Users": users,
 	})
@@ -33,6 +33,7 @@ var GetAllUsers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request)
 var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
+	defer db.Close()
 	userImpl := UserService.NewUserRepositoryImpl(db)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -54,7 +55,7 @@ var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 		dialog.Alert(msg)
 		http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
 	default:
-		userImpl.InsertUser(context.Background(), db, &user, &id_position)
+		userImpl.InsertUser(context.Background(), &user, &id_position)
 		http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
 	}
 }
@@ -74,6 +75,7 @@ var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 var DeleteUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
+	defer db.Close()
 
 	userImple := service.NewUserRepositoryImpl(db)
 
@@ -81,7 +83,7 @@ var DeleteUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) 
 	helper.PanicHandler(err)
 
 	user := model.User{Id_User: id}
-	result := userImple.DeleteUser(context.Background(), db, &user)
+	result := userImple.DeleteUser(context.Background(), &user)
 	if result == true {
 		dialog.Alert("Hapus Data Berhasil Dilakukan")
 	} else {
@@ -105,7 +107,7 @@ var GetUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reques
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		user = userImpl.GetUser(context.Background(), db, &id_user)
+		user = userImpl.GetUser(context.Background(), &id_user)
 	}()
 	go func() {
 		defer wg.Done()
@@ -149,7 +151,7 @@ var PostUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	defer db.Close()
 
 	userImpl := service.NewUserRepositoryImpl(db)
-	result := userImpl.UpdateUser(ctx, db, &user)
+	result := userImpl.UpdateUser(ctx, &user)
 
 	select {
 	case <-ctx.Done():

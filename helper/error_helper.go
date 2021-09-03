@@ -25,6 +25,7 @@ func ValidationHelper(w http.ResponseWriter, cancel context.CancelFunc, err erro
 		errors := err.(validator.ValidationErrors)
 		defer cancel()
 		for _, err := range errors {
+			fmt.Println(err)
 			return err.Error()
 		}
 	}

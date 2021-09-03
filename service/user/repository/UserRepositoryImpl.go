@@ -18,10 +18,11 @@ func NewUserRepositoryImpl(dbParam *sql.DB) UserRepository {
 	return userRepositoryImpl{db: dbParam}
 }
 
-func (usr userRepositoryImpl) GetAllUser(ctx context.Context, db *sql.DB) []UserModel.User {
+func (usr userRepositoryImpl) GetAllUser(ctx context.Context) []UserModel.User {
+	defer usr.db.Close()
 	var users []UserModel.User
 	sql := "SELECT id_user, positions.position, nama_depan, nama_belakang, username, email, password, level, created_at FROM users INNER JOIN positions ON users.id_position = positions.id"
-	rows, err := db.QueryContext(ctx, sql)
+	rows, err := usr.db.QueryContext(ctx, sql)
 	helper.PanicHandler(err)
 	defer rows.Close()
 
@@ -33,21 +34,22 @@ func (usr userRepositoryImpl) GetAllUser(ctx context.Context, db *sql.DB) []User
 	}
 	return users
 }
-func (usr userRepositoryImpl) InsertUser(ctx context.Context, db *sql.DB, user *UserModel.User, id_position *string) bool {
+func (usr userRepositoryImpl) InsertUser(ctx context.Context, user *UserModel.User, id_position *string) bool {
+	defer usr.db.Close()
 	sql := "INSERT INTO users(id_position,nama_depan, nama_belakang, username,email,password,level) VALUES(?,? ,? ,? ,? ,? ,?)"
 	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password.String), bcrypt.DefaultCost)
 	helper.PanicHandler(err)
 
-	result, err := db.ExecContext(ctx, sql, &id_position, user.NamaDepan, user.NamaBelakang.String, user.Username, user.Email, hashed, user.Level)
+	result, err := usr.db.ExecContext(ctx, sql, &id_position, user.NamaDepan, user.NamaBelakang.String, user.Username, user.Email, hashed, user.Level)
 	helper.PanicHandler(err)
 
 	affected, _ := result.RowsAffected()
 	return affected > 0
 }
-func (usr userRepositoryImpl) GetUser(ctx context.Context, db *sql.DB, id_user *int) model.User {
+func (usr userRepositoryImpl) GetUser(ctx context.Context, id_user *int) model.User {
+	defer usr.db.Close()
 	sql := "SELECT id_user, positions.id,positions.position, nama_depan, nama_belakang, username, email, level FROM users INNER JOIN positions ON users.id_position = positions.id WHERE id_user = ?"
-
-	rows, err := db.QueryContext(ctx, sql, *id_user)
+	rows, err := usr.db.QueryContext(ctx, sql, *id_user)
 	helper.PanicHandler(err)
 	defer rows.Close()
 
@@ -58,16 +60,18 @@ func (usr userRepositoryImpl) GetUser(ctx context.Context, db *sql.DB, id_user *
 	}
 	return user
 }
-func (usr userRepositoryImpl) UpdateUser(ctx context.Context, db *sql.DB, user *UserModel.User) bool {
+func (usr userRepositoryImpl) UpdateUser(ctx context.Context, user *UserModel.User) bool {
+	defer usr.db.Close()
 	sql := "UPDATE users SET nama_depan = ?, nama_belakang = ?, username = ?,email = ?, level = ?, id_position = ? WHERE id_user = ?"
-	result, err := db.ExecContext(ctx, sql, user.NamaDepan, user.NamaBelakang.String, user.Username, user.Email, user.Level, user.Position.Id_Position.Int64, user.Id_User)
+	result, err := usr.db.ExecContext(ctx, sql, user.NamaDepan, user.NamaBelakang.String, user.Username, user.Email, user.Level, user.Position.Id_Position.Int64, user.Id_User)
 	helper.PanicHandler(err)
 	affected, _ := result.RowsAffected()
 	return affected > 0
 }
-func (usr userRepositoryImpl) DeleteUser(ctx context.Context, db *sql.DB, user *UserModel.User) bool {
+func (usr userRepositoryImpl) DeleteUser(ctx context.Context, user *UserModel.User) bool {
+	defer usr.db.Close()
 	sql := "DELETE FROM users WHERE id_user = ?"
-	result, err := db.ExecContext(context.Background(), sql, user.Id_User)
+	result, err := usr.db.ExecContext(context.Background(), sql, user.Id_User)
 	helper.PanicHandler(err)
 
 	affected, err := result.RowsAffected()

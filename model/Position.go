@@ -4,5 +4,5 @@ import "database/sql"
 
 type Position struct {
 	Id_Position sql.NullInt64
-	Position    sql.NullString
+	Position    sql.NullString `validate:"required"`
 }

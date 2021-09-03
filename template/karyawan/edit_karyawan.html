@@ -3,7 +3,7 @@
     {{template "top-wrapper"}}
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Tambah Karyawan</h3>
+                <h3 class="card-title">Edit Karyawan</h3>
             </div>
             <div class="card-body">
                 <form action="/post/karyawan/edit" method="post">
@@ -45,9 +45,11 @@
                                     <option value="admin">Admin</option>
                                     <option value="karyawan">Karyawan</option>
                                 </select>
+                                <small class="text-danger">
+                                    Level Saat Ini <b>{{.User.Level}}</b>, Abaikan Pilihan Diatas Jika Level Tidak Diganti 
+                                </small>
                             </div>
                         </div>
-
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="" class="form-label">Jabatan</label>
@@ -57,6 +59,9 @@
                                         <option value="{{$p.Id_Position.Int64}}">{{$p.Position.String}}</option>
                                     {{end}}
                                 </select>
+                                <small class="text-danger">
+                                    Jabatan Saat Ini <b>{{.User.Position.Position.String}}</b>, Abaikan Pilihan Diatas Jika Jabatan Tidak Diganti 
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -69,6 +74,6 @@
                 </form>
             </div>
         </div>
-    {{template "bottom-wrapprt"}}
+    {{template "bottom-wrapper"}}
 {{template "footer"}}
 {{end}}

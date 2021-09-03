@@ -10,6 +10,7 @@ func CreateServer(host string, mux *http.ServeMux) {
 		Addr:    host,
 		Handler: mux,
 	}
+
 	err := server.ListenAndServe()
 	PanicHandler(err)
 }
