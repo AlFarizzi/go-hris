@@ -42,6 +42,14 @@ func main() {
 	mux.HandleFunc("/get/hubungan-keluarga/update", router.GetUpdateHubunganKeluarga.ServeHTTP)
 	mux.HandleFunc("/post/hubungan-keluarga/update", router.PostUpdateHubunganKeluarga.ServeHTTP)
 
+	// Jenis Kelamin
+	mux.HandleFunc("/get/jenis-kelamin", router.GetJenisKelamin.ServeHTTP)
+	mux.HandleFunc("/get/jenis-kelamin/delete", router.DeleteJenisKelamin.ServeHTTP)
+	mux.HandleFunc("/get/jenis-kelamin/tambah", router.GetTambahJenisKelamin.ServeHTTP)
+	mux.HandleFunc("/post/jenis-kelamin/tambah", router.PostTambahJenisKelamin.ServeHTTP)
+	mux.HandleFunc("/get/jenis-kelamin/update", router.GetUpdateJenisKelamin.ServeHTTP)
+	mux.HandleFunc("/post/jenis-kelamin/update", router.PostUpdateJenisKelamin.ServeHTTP)
+
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)
 }

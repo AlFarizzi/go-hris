@@ -31,7 +31,7 @@ func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan str
 	}
 
 	err := validate.Struct(user)
-	msg := helper.ValidationHelper(w, cancel, err)
+	msg := helper.ValidationHelper(cancel, err)
 
 	select {
 	case <-ctx.Done():
@@ -110,7 +110,7 @@ func PostUpdateKaryawanService(w http.ResponseWriter, r *http.Request, id_user i
 	}
 
 	err := validator.Struct(user)
-	msg := helper.ValidationHelper(w, cancel, err)
+	msg := helper.ValidationHelper(cancel, err)
 	result := userImpl.UpdateUser(ctx, &user)
 
 	select {

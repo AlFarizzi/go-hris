@@ -1,0 +1,41 @@
+{{define "tambah_jk"}}
+    {{template "header"}}
+    {{template "top-wrapper"}}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                {{if eq .url "/post/jenis-kelamin/update"}}
+                    Update Jenis Kelamin
+                {{else}}
+                    Tambah Jenis Kelamin
+                {{end}}
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="card-body">
+                <form action="{{.url}}" method="post">
+                    <input type="hidden" name="id_jenis" value="{{.Jenis.Id_JenisKelamin}}">
+                    <div class="form-group">
+                        <label for="" class="form-label">Jenis Kelamin</label>
+                        <input 
+                        {{if eq .url "/post/jenis-kelamin/update"}}
+                        value="{{.Jenis.Jenis_Kelamin}}"
+                        {{end}}
+                        placeholder="Masukan Jenis Kelamin" type="text" name="jenis" id="" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-sm">
+                        {{if eq .url "/post/jenis-kelamin/update"}}
+                        Update Jenis Kelamin
+                        {{else}}
+                            Tambah Jenis Kelamin
+                        {{end}}
+                    </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "bottom-wrapper"}}
+        {{template "footer"}}
+    {{end}}

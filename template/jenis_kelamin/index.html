@@ -1,0 +1,33 @@
+{{define "jk_dashboard"}}
+{{template "header"}}
+{{template "top-wrapper"}}
+<div class="card">
+   <div class="card-header">
+       <h3 class="card-title">Data Jenis Kelamin</h3>
+       <a href="/get/jenis-kelamin/tambah" class="btn btn-primary btn-sm">Tambah Jenis Kelamin</a>
+   </div>
+   <div class="card-body">
+       <div class="table-responsive">
+           <table class="table table-hover">
+                <tr>
+                    <th>Jenis Kelamin</th>
+                    <th>Aksi</th>
+                </tr>
+
+                {{range $jk := .JK}}
+                    <tr>
+                        <td>{{$jk.Jenis_Kelamin}}</td>
+                        <td>
+                            <a onclick="return confirm('Apakah Anda Yakin Akan Menghapus Jenis Kelamin Ini ?')" href="/get/jenis-kelamin/delete?id_jenis={{$jk.Id_JenisKelamin}}" class="btn btn-danger btn-sm">Hapus</a>
+                            <a href="/get/jenis-kelamin/update?id_jenis={{$jk.Id_JenisKelamin}}" class="btn btn-warning btn-sm text-white">Edit</a>
+                        </td>
+                    </tr>                
+                {{end}}
+           </table>
+       </div>
+   </div>
+
+</div>
+{{template "bottom-wrapper"}}
+{{template "footer"}}
+{{end}}

@@ -27,3 +27,9 @@ func HubunganKeluargaViewParser(w http.ResponseWriter, view string, data map[str
 	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
 	tmp.ExecuteTemplate(w, view, data)
 }
+
+func JenisKelaminViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
+	tmp := template.Must(template.ParseGlob("template/jenis_kelamin/*.html"))
+	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
+	tmp.ExecuteTemplate(w, view, data)
+}
