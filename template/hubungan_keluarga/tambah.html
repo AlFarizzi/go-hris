@@ -1,0 +1,39 @@
+{{define "tambah_hubungan"}}
+    {{template "header"}}
+    {{template "top-wrapper"}}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                {{if eq .url "/post/hubungan-keluarga/update"}}
+                    Edit Hubungan Keluarga
+                {{else}}
+                    Tambah Hubungan Keluarga
+                {{end}}
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="card-body">
+                <form action="{{.url}}" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="id_hubungan" value="{{.Hubungan.Id_Hubungan}}">
+                            <label for="" class="form-label">Hubungan Keluarga</label>
+                            <input 
+                            value="{{if eq .url "/post/hubungan-keluarga/update"}} {{.Hubungan.Hubungan}} {{end}}"
+                            type="text" name="hubungan" class="form-control" placeholder="Masukan Hubungan Keluarga">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                {{if eq .url "/post/hubungan-keluarga/update"}}
+                                Edit Hubungan Keluarga
+                                {{else}}
+                                    Tambah Hubungan Keluarga
+                                {{end}}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "bottom-wrapper"}}
+        {{template "footer"}}
+    {{end}}

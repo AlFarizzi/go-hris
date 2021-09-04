@@ -18,6 +18,8 @@ import (
 
 func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan string, nama_belakang string, username string, email string, password string, level string, id_position string, userImpl UserRepository.UserRepository) {
 	validate := validator.New()
+	ctx, cancel := context.WithCancel(context.Background())
+
 	user := model.User{
 		NamaDepan:    nama_depan,
 		NamaBelakang: sql.NullString{String: nama_belakang, Valid: true},
@@ -29,7 +31,6 @@ func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan str
 	}
 
 	err := validate.Struct(user)
-	ctx, cancel := context.WithCancel(context.Background())
 	msg := helper.ValidationHelper(w, cancel, err)
 
 	select {

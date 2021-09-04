@@ -9,13 +9,13 @@ import (
 )
 
 func PanicHandler(err error) {
-	defer func() {
-		message := recover()
-		if message != nil {
-			fmt.Println(message)
-		}
-	}()
 	if err != nil {
+		defer func() {
+			message := recover()
+			if message != nil {
+				fmt.Println(message)
+			}
+		}()
 		panic(err)
 	}
 }

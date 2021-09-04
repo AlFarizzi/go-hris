@@ -34,6 +34,14 @@ func main() {
 	mux.HandleFunc("/get/positions/update", router.GetUpdatePositionWithMiddleware.ServeHTTP)
 	mux.HandleFunc("/post/positions/update", router.PostUpdatePositionWithMiddleware.ServeHTTP)
 
+	// Hubungan Keluarga
+	mux.HandleFunc("/get/hubungan-keluarga", router.GetHubunganKeluaga.ServeHTTP)
+	mux.HandleFunc("/get/hubungan-keluarga/delete", router.DeleteHubunganKeluarga.ServeHTTP)
+	mux.HandleFunc("/get/hubungan-keluarga/tambah", router.GetTambahHubunganKeluarga.ServeHTTP)
+	mux.HandleFunc("/post/hubungan-keluarga/tambah", router.PostTambahHubunganKelurga.ServeHTTP)
+	mux.HandleFunc("/get/hubungan-keluarga/update", router.GetUpdateHubunganKeluarga.ServeHTTP)
+	mux.HandleFunc("/post/hubungan-keluarga/update", router.PostUpdateHubunganKeluarga.ServeHTTP)
+
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)
 }

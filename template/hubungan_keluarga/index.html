@@ -1,0 +1,34 @@
+{{define "hubungan_dashboard"}}
+{{template "header"}}
+{{template "top-wrapper"}}
+<div class="card">
+   <div class="card-header">
+       <h3 class="card-title">Data Hubungan Keluarga</h3>
+       <a href="/get/hubungan-keluarga/tambah" class="btn btn-primary btn-sm">Tambah Hubungan Keluarga</a>
+   </div>
+   <div class="card-body">
+       <div class="table-responsive">
+           <table class="table table-hover">
+               <tr>
+                   <th>
+                       Hubungan Keluarga
+                   </th>
+                   <th>Aksi</th>
+               </tr>
+               {{range $hubungan := .Hubungan}}
+               <tr>
+                   <td>{{$hubungan.Hubungan}}</td>
+                   <td>
+                       <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/hubungan-keluarga/delete?id_hubungan={{$hubungan.Id_Hubungan}}" class="btn btn-danger btn-sm">Hapus</a>
+                       <a href="/get/hubungan-keluarga/update?id_hubungan={{$hubungan.Id_Hubungan}}" class="btn btn-warning btn-sm text-white">Update</a>
+                   </td>
+               </tr>
+               {{end}}
+           </table>
+       </div>
+   </div>
+
+</div>
+{{template "bottom-wrapper"}}
+{{template "footer"}}
+{{end}}

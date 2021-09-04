@@ -21,3 +21,9 @@ func PositionViewParser(w http.ResponseWriter, view string, data map[string]inte
 	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
 	tmp.ExecuteTemplate(w, view, data)
 }
+
+func HubunganKeluargaViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
+	tmp := template.Must(template.ParseGlob("template/hubungan_keluarga/*.html"))
+	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
+	tmp.ExecuteTemplate(w, view, data)
+}

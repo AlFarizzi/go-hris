@@ -7,10 +7,9 @@ import (
 	"go-hris/middleware"
 	"go-hris/model"
 	PositionRepository "go-hris/service/position/repository"
+	PositionService "go-hris/service/position/service"
 	"net/http"
 	"strconv"
-
-	"tawesoft.co.uk/go/dialog"
 )
 
 var GetAllPosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
@@ -39,19 +38,7 @@ var PostTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Req
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	posisi := r.PostFormValue("posisi")
 	position := model.Position{Position: sql.NullString{String: posisi}}
-
-	if position.Position.String == "" {
-		dialog.Alert("Input Tidak Valid")
-	} else {
-		result := positionImpl.TambahPosisi(context.Background(), position)
-		switch result {
-		case true:
-			dialog.Alert("Tambah Posisi Berhasil Dilakukan")
-		default:
-			dialog.Alert("Tambah Posisi Gagal")
-		}
-	}
-	http.Redirect(rw, r, "/get/position", http.StatusSeeOther)
+	PositionService.InputPosisiService(rw, r, position, positionImpl)
 }
 
 var DeletePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
@@ -61,15 +48,7 @@ var DeletePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	defer db.Close()
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
-	result := positionImpl.DeletePosisi(context.Background(), model.Position{Id_Position: sql.NullInt64{Int64: int64(id)}})
-
-	switch result {
-	case true:
-		dialog.Alert("Hapus Posisi Berhasil")
-	default:
-		dialog.Alert("Hapus Posisi Gagal, Masih Ada Karyawan Dengan Jabatan Ini")
-	}
-	http.Redirect(rw, r, "/get/position", http.StatusFound)
+	PositionService.DeletePosisiService(rw, r, positionImpl, int64(id))
 }
 
 var GetPositionMembers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
@@ -111,17 +90,7 @@ var PostUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	position_input := r.PostFormValue("posisi")
 	id_position_input, _ := strconv.Atoi(r.PostFormValue("id_position"))
-	position := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position_input)}, Position: sql.NullString{String: position_input}}
-
-	if position.Position.String == "" {
-		dialog.Alert("Update Position Gagal")
-	} else {
-		affected := positionImpl.UpdatePosition(context.Background(), position)
-		if affected == true {
-			dialog.Alert("Update Posisi Berhasil")
-		}
-	}
-	http.Redirect(rw, r, "/get/position", http.StatusSeeOther)
+	PositionService.UpdatePosisiService(rw, r, int64(id_position_input), position_input, positionImpl)
 }
 
 // middleware
