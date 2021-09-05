@@ -4,6 +4,8 @@ import (
 	"context"
 	"go-hris/helper"
 	"go-hris/middleware"
+	HubunganRepository "go-hris/service/hubungan_keluarga/repository"
+	JKRepository "go-hris/service/jenis_kelamin/repository"
 	PositionRepository "go-hris/service/position/repository"
 	UserRepository "go-hris/service/user/repository"
 	"go-hris/service/user/service"
@@ -18,7 +20,7 @@ var GetAllUsers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request)
 	userImpl := UserRepository.NewUserRepositoryImpl(db)
 
 	users := userImpl.GetAllUser(context.Background())
-	helper.KaryawanViewParser(rw, "karyawan_dashboard", map[string]interface{}{
+	helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
 		"Users": users,
 	})
 }
@@ -45,9 +47,17 @@ var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 	defer db.Close()
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
+	hubunganImpl := HubunganRepository.NewHubunganKeluargaImpl(db)
+	jkImpl := JKRepository.NewJenisKelaminImpl(db)
+
 	positions := positionImpl.GetAllPositions(context.Background())
-	helper.KaryawanViewParser(rw, "tambah_karyawan", map[string]interface{}{
+	hubungan := hubunganImpl.GetAll(context.Background())
+	jk := jkImpl.GetAll(context.Background())
+
+	helper.DashboardViewParser(rw, "tambah_karyawan", helper.KARYAWAN, map[string]interface{}{
 		"Positions": positions,
+		"Hubungan":  hubungan,
+		"JK":        jk,
 	})
 }
 

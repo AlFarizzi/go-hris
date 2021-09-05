@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"go-hris/helper"
 	"go-hris/middleware"
 	"go-hris/model"
@@ -19,13 +20,14 @@ var GetAllPosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	positions := positionImpl.GetAllPositions(context.Background())
-	helper.PositionViewParser(rw, "position_dashboard", map[string]interface{}{
+	fmt.Println(positions)
+	helper.DashboardViewParser(rw, "position_dashboard", "template/job_position/*.html", map[string]interface{}{
 		"Positions": positions,
 	})
 }
 
 var GetTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
-	helper.PositionViewParser(rw, "tambah_position", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_position", helper.JOB_POSITION, map[string]interface{}{
 		"Url": "/post/position/tambah",
 	})
 }
@@ -61,7 +63,7 @@ var GetPositionMembers http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	id_position, _ := strconv.Atoi(r.URL.Query().Get("id_position"))
 	position := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position)}}
 	members := positionImpl.GetPositionMembers(context.Background(), position)
-	helper.KaryawanViewParser(rw, "karyawan_dashboard", map[string]interface{}{
+	helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
 		"Users": members,
 	})
 }
@@ -76,7 +78,7 @@ var GetUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 	pstn := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position)}}
 	position := positionImpl.GetPosition(context.Background(), pstn)
 
-	helper.PositionViewParser(rw, "tambah_position", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_position", helper.JOB_POSITION, map[string]interface{}{
 		"Url":      "/post/positions/update",
 		"Position": position,
 	})

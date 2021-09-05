@@ -85,7 +85,7 @@ func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserR
 	positions = <-positionsChannel
 	wg.Wait()
 
-	helper.KaryawanViewParser(w, "edit_karyawan", map[string]interface{}{"User": user, "Positions": positions})
+	helper.DashboardViewParser(w, "edit_karyawan", helper.KARYAWAN, map[string]interface{}{"User": user, "Positions": positions})
 }
 
 func PostUpdateKaryawanService(w http.ResponseWriter, r *http.Request, id_user int, nama_depan string, nama_belakang string, email string, username string, old_level string, old_id_position int64, level string, id_position string, userImpl UserRepository.UserRepository) {

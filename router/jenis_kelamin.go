@@ -16,7 +16,7 @@ var GetJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.Respon
 	jkImpl := repository.NewJenisKelaminImpl(db)
 
 	jenis_kelamin := jkImpl.GetAll(context.Background())
-	helper.JenisKelaminViewParser(rw, "jk_dashboard", map[string]interface{}{
+	helper.DashboardViewParser(rw, "jk_dashboard", helper.JENIS_KELAMIN, map[string]interface{}{
 		"JK": jenis_kelamin,
 	})
 }}
@@ -32,7 +32,7 @@ var DeleteJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.Res
 }}
 
 var GetTambahJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	helper.JenisKelaminViewParser(rw, "tambah_jk", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_jk", helper.JENIS_KELAMIN, map[string]interface{}{
 		"url": "/post/jenis-kelamin/tambah",
 	})
 }}
@@ -54,7 +54,7 @@ var GetUpdateJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.
 
 	jkImpl := repository.NewJenisKelaminImpl(db)
 	jenis_kelamin := jkImpl.GetJenis(context.Background(), id_jenis)
-	helper.JenisKelaminViewParser(rw, "tambah_jk", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_jk", helper.JENIS_KELAMIN, map[string]interface{}{
 		"url":   "/post/jenis-kelamin/update",
 		"Jenis": jenis_kelamin,
 	})

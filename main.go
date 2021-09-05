@@ -13,12 +13,12 @@ var public embed.FS
 func main() {
 	mux := http.NewServeMux()
 
+	// Auth
 	mux.HandleFunc("/", router.GetLoginWithMiddleware.ServeHTTP)
 	mux.HandleFunc("/post-login", router.PostLoginWithMiddleware.ServeHTTP)
 
-	mux.HandleFunc("/get/karyawan", router.GetAllUsersWithMiddleware.ServeHTTP)
-
 	// Karyawan
+	mux.HandleFunc("/get/karyawan", router.GetAllUsersWithMiddleware.ServeHTTP)
 	mux.HandleFunc("/get/karyawan/tambah", router.GetTambahKaryawanWithMiddleware.ServeHTTP)
 	mux.HandleFunc("/post/karyawan/tambah", router.PostTambahKaryawanWithMiddleware.ServeHTTP)
 	mux.HandleFunc("/get/karyawan/delete", router.DeleteUserWithMiddleware.ServeHTTP)
@@ -49,6 +49,14 @@ func main() {
 	mux.HandleFunc("/post/jenis-kelamin/tambah", router.PostTambahJenisKelamin.ServeHTTP)
 	mux.HandleFunc("/get/jenis-kelamin/update", router.GetUpdateJenisKelamin.ServeHTTP)
 	mux.HandleFunc("/post/jenis-kelamin/update", router.PostUpdateJenisKelamin.ServeHTTP)
+
+	// Status Pernikahan
+	mux.HandleFunc("/get/status-pernikahan", router.GetStatusPernikahan.ServeHTTP)
+	mux.HandleFunc("/get/status-pernikahan/delete", router.DeleteStatusPernikahan.ServeHTTP)
+	mux.HandleFunc("/get/status-pernikahan/tambah", router.GetTambahStatusPernikahan.ServeHTTP)
+	mux.HandleFunc("/post/status-pernikahan/tambah", router.PostTambahStatusPernikahan.ServeHTTP)
+	mux.HandleFunc("/get/status-pernikahan/update", router.GetUpdateStatusPernikahan.ServeHTTP)
+	mux.HandleFunc("/post/status-pernikahan/update", router.PostUpdateStatusPernikahan.ServeHTTP)
 
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)

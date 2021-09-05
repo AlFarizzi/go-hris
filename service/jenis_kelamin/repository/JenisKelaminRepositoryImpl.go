@@ -16,7 +16,6 @@ func NewJenisKelaminImpl(db *sql.DB) JenisKelaminRepository {
 }
 
 func (impl jenisKelaminImpl) GetAll(ctx context.Context) []model.JenisKelamin {
-	defer impl.db.Close()
 	var jenis_kelamin []model.JenisKelamin
 	sql := "SELECT id,jenis_kelamin FROM jenis_kelamin"
 

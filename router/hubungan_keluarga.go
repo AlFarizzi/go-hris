@@ -16,7 +16,7 @@ var GetHubunganKeluaga middleware.Get = middleware.Get{Handler: func(rw http.Res
 	helper.PanicHandler(err)
 
 	data := repository.NewHubunganKeluargaImpl(db).GetAll(context.Background())
-	helper.HubunganKeluargaViewParser(rw, "hubungan_dashboard", map[string]interface{}{
+	helper.DashboardViewParser(rw, "hubungan_dashboard", helper.HUBUNGAN_KELUARHA, map[string]interface{}{
 		"Hubungan": data,
 	})
 }}
@@ -31,7 +31,7 @@ var DeleteHubunganKeluarga middleware.Get = middleware.Get{Handler: func(rw http
 }}
 
 var GetTambahHubunganKeluarga middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	helper.HubunganKeluargaViewParser(rw, "tambah_hubungan", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_hubungan", helper.HUBUNGAN_KELUARHA, map[string]interface{}{
 		"url": "/post/hubungan-keluarga/tambah",
 	})
 }}
@@ -53,7 +53,7 @@ var GetUpdateHubunganKeluarga middleware.Get = middleware.Get{Handler: func(rw h
 	id_hubungan, _ := strconv.Atoi(r.URL.Query().Get("id_hubungan"))
 	hubungan := hubunganImpl.GetHubungan(context.Background(), id_hubungan)
 	fmt.Println(hubungan)
-	helper.HubunganKeluargaViewParser(rw, "tambah_hubungan", map[string]interface{}{
+	helper.DashboardViewParser(rw, "tambah_hubungan", helper.HUBUNGAN_KELUARHA, map[string]interface{}{
 		"url":      "/post/hubungan-keluarga/update",
 		"Hubungan": hubungan,
 	})

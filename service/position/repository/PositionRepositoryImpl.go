@@ -17,7 +17,6 @@ func NewPositionRepositoryImpl(db *sql.DB) PositionRepository {
 
 func (impl *positionRepositoryImpl) GetAllPositions(ctx context.Context) []model.Position {
 	var positions []model.Position
-	defer impl.db.Close()
 	sql := "SELECT id,position FROM positions"
 	rows, err := impl.db.QueryContext(ctx, sql)
 	helper.PanicHandler(err)

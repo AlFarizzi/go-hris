@@ -10,26 +10,9 @@ func AuthViewParser(w http.ResponseWriter, view string) {
 	tmp.ExecuteTemplate(w, view, nil)
 }
 
-func KaryawanViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
-	tmp := template.Must(template.ParseGlob("template/karyawan/*.html"))
-	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
-	tmp.ExecuteTemplate(w, view, data)
-}
+var partials = template.Must(template.ParseGlob("template/dashboard_partials/*.html"))
 
-func PositionViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
-	tmp := template.Must(template.ParseGlob("template/job_position/*.html"))
-	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
-	tmp.ExecuteTemplate(w, view, data)
-}
-
-func HubunganKeluargaViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
-	tmp := template.Must(template.ParseGlob("template/hubungan_keluarga/*.html"))
-	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
-	tmp.ExecuteTemplate(w, view, data)
-}
-
-func JenisKelaminViewParser(w http.ResponseWriter, view string, data map[string]interface{}) {
-	tmp := template.Must(template.ParseGlob("template/jenis_kelamin/*.html"))
-	tmp = template.Must(tmp.ParseGlob("template/dashboard_partials/*.html"))
+func DashboardViewParser(w http.ResponseWriter, view string, path string, data map[string]interface{}) {
+	tmp := template.Must(partials.ParseGlob(path))
 	tmp.ExecuteTemplate(w, view, data)
 }

@@ -21,7 +21,6 @@ func (impl hubunganKeluargaRepositoryImpl) GetAll(ctx context.Context) []model.H
 	rows, err := impl.db.QueryContext(ctx, sql)
 	helper.PanicHandler(err)
 
-	defer impl.db.Close()
 	defer rows.Close()
 
 	for rows.Next() {
