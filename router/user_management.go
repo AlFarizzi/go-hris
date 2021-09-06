@@ -4,9 +4,12 @@ import (
 	"context"
 	"go-hris/helper"
 	"go-hris/middleware"
+	FamilyRepository "go-hris/service/family/repository"
+	FamilyService "go-hris/service/family/service"
 	HubunganRepository "go-hris/service/hubungan_keluarga/repository"
 	JKRepository "go-hris/service/jenis_kelamin/repository"
 	PositionRepository "go-hris/service/position/repository"
+	"go-hris/service/status_pernikahan/repository"
 	UserRepository "go-hris/service/user/repository"
 	"go-hris/service/user/service"
 	"net/http"
@@ -29,6 +32,9 @@ var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
+	err = r.ParseForm()
+	helper.PanicHandler(err)
+
 	userImpl := UserRepository.NewUserRepositoryImpl(db)
 
 	id_position := r.PostFormValue("id_position")
@@ -38,7 +44,14 @@ var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
 	level := r.PostFormValue("level")
-	service.InputKaryawanService(rw, r, nama_depan, nama_belakang, username, email, password, level, id_position, userImpl)
+
+	dataFamily, err := FamilyService.AppendData(r.PostForm["nama_lengkap"], r.PostForm["nik"], r.PostForm["pekerjaan"], r.PostForm["tgl_lahir"], r.PostForm["hubungan_keluarga"], r.PostForm["status_pernikahan"], r.PostForm["jenis_kelamin"])
+	if err == nil {
+		id_user := service.InputKaryawanService(rw, r, nama_depan, nama_belakang, username, email, password, level, id_position, userImpl)
+		familyImpl := FamilyRepository.NewFamilyImpl(db)
+		FamilyService.InsertData(familyImpl, id_user, &dataFamily)
+	}
+	http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
 }
 
 var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
@@ -49,15 +62,18 @@ var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	hubunganImpl := HubunganRepository.NewHubunganKeluargaImpl(db)
 	jkImpl := JKRepository.NewJenisKelaminImpl(db)
+	statausImpl := repository.NewStatusPernikahanImpl(db)
 
 	positions := positionImpl.GetAllPositions(context.Background())
 	hubungan := hubunganImpl.GetAll(context.Background())
 	jk := jkImpl.GetAll(context.Background())
+	status := statausImpl.GetAll(context.Background())
 
 	helper.DashboardViewParser(rw, "tambah_karyawan", helper.KARYAWAN, map[string]interface{}{
 		"Positions": positions,
 		"Hubungan":  hubungan,
 		"JK":        jk,
+		"Status":    status,
 	})
 }
 
@@ -78,7 +94,8 @@ var GetUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reques
 	defer db.Close()
 	userImpl := UserRepository.NewUserRepositoryImpl(db)
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
-	service.GetUpdateUserService(rw, r, userImpl, positionImpl)
+	familyImpl := FamilyRepository.NewFamilyImpl((db))
+	service.GetUpdateUserService(rw, r, userImpl, positionImpl, familyImpl)
 }
 
 var PostUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {

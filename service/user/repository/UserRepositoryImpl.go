@@ -34,8 +34,7 @@ func (usr userRepositoryImpl) GetAllUser(ctx context.Context) []UserModel.User {
 	}
 	return users
 }
-func (usr userRepositoryImpl) InsertUser(ctx context.Context, user *UserModel.User, id_position *string) bool {
-	defer usr.db.Close()
+func (usr userRepositoryImpl) InsertUser(ctx context.Context, user *UserModel.User, id_position *string) int {
 	sql := "INSERT INTO users(id_position,nama_depan, nama_belakang, username,email,password,level) VALUES(?,? ,? ,? ,? ,? ,?)"
 	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password.String), bcrypt.DefaultCost)
 	helper.PanicHandler(err)
@@ -43,8 +42,8 @@ func (usr userRepositoryImpl) InsertUser(ctx context.Context, user *UserModel.Us
 	result, err := usr.db.ExecContext(ctx, sql, &id_position, user.NamaDepan, user.NamaBelakang.String, user.Username, user.Email, hashed, user.Level)
 	helper.PanicHandler(err)
 
-	affected, _ := result.RowsAffected()
-	return affected > 0
+	last, _ := result.LastInsertId()
+	return int(last)
 }
 func (usr userRepositoryImpl) GetUser(ctx context.Context, id_user *int) model.User {
 	defer usr.db.Close()

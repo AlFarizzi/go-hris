@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"go-hris/helper"
 	"go-hris/model"
+	"go-hris/service/family/repository"
 	PositionRepository "go-hris/service/position/repository"
 	UserRepository "go-hris/service/user/repository"
 	"net/http"
@@ -16,8 +17,9 @@ import (
 	"tawesoft.co.uk/go/dialog"
 )
 
-func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan string, nama_belakang string, username string, email string, password string, level string, id_position string, userImpl UserRepository.UserRepository) {
+func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan string, nama_belakang string, username string, email string, password string, level string, id_position string, userImpl UserRepository.UserRepository) int {
 	validate := validator.New()
+	var id int
 	ctx, cancel := context.WithCancel(context.Background())
 
 	user := model.User{
@@ -37,13 +39,14 @@ func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan str
 	case <-ctx.Done():
 		dialog.Alert(msg)
 	default:
-		if userImpl.InsertUser(context.Background(), &user, &id_position) == true {
+		id = userImpl.InsertUser(context.Background(), &user, &id_position)
+		if id > 0 {
 			dialog.Alert("Karyawan Berhasil Ditambahkan")
 		} else {
 			dialog.Alert("Karyawan Gagal Ditambahkan")
 		}
 	}
-	http.Redirect(w, r, "/get/karyawan", http.StatusSeeOther)
+	return id
 }
 
 func DeleteKaryawanService(w http.ResponseWriter, r *http.Request, id int, userImple UserRepository.UserRepository) {
@@ -67,25 +70,34 @@ func setPosition(wg *sync.WaitGroup, positionsChannel chan []model.Position, pos
 	positionsChannel <- positionImpl.GetAllPositions(context.Background())
 }
 
-func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository) {
+func setFamily(id_user int, wg *sync.WaitGroup, familyChannel chan []model.UserFamily, familyImpl repository.FamilyRepository) {
+	defer wg.Done()
+	familyChannel <- familyImpl.GetFamily(context.Background(), id_user)
+}
+
+func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository, familyImpl repository.FamilyRepository) {
 	var user model.User
 	var positions []model.Position
+	var families []model.UserFamily
 	var userChannel = make(chan model.User)
 	var positionsChannel = make(chan []model.Position)
+	var familyChannel = make(chan []model.UserFamily)
 	id_user, _ := strconv.Atoi(r.URL.Query().Get("id_user"))
 
 	defer close(userChannel)
 	defer close(positionsChannel)
+	defer close(familyChannel)
 	wg := sync.WaitGroup{}
 
-	wg.Add(2)
+	wg.Add(3)
 	go setUser(userChannel, &wg, userImpl, id_user)
 	go setPosition(&wg, positionsChannel, positionImpl)
+	go setFamily(id_user, &wg, familyChannel, familyImpl)
 	user = <-userChannel
 	positions = <-positionsChannel
+	families = <-familyChannel
 	wg.Wait()
-
-	helper.DashboardViewParser(w, "edit_karyawan", helper.KARYAWAN, map[string]interface{}{"User": user, "Positions": positions})
+	helper.DashboardViewParser(w, "edit_karyawan", helper.KARYAWAN, map[string]interface{}{"Families": families, "User": user, "Positions": positions})
 }
 
 func PostUpdateKaryawanService(w http.ResponseWriter, r *http.Request, id_user int, nama_depan string, nama_belakang string, email string, username string, old_level string, old_id_position int64, level string, id_position string, userImpl UserRepository.UserRepository) {

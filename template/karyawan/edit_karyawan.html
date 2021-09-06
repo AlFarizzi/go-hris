@@ -1,11 +1,26 @@
 {{define "edit_karyawan"}}
 {{template "header"}}
     {{template "top-wrapper"}}
-        <div class="card">
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" id="view-changer" data-identifier="pribadi">Data Pribadi</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn" id="view-changer" data-identifier="keluarga">Data Keluarga</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="tab-view" data-identifier="pribadi">
             <div class="card-header">
                 <h3 class="card-title">Edit Karyawan</h3>
             </div>
             <div class="card-body">
+               
                 <form action="/post/karyawan/edit" method="post">
                     <div class="row">
                         <div class="col-md-6">
@@ -72,6 +87,41 @@
                         <button class="btn btn-primary btn-sm">Update Karyawan</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="card" id="tab-view" data-identifier="keluarga" style="display: block;">
+            <div class="card-header">
+                <h3 class="card-title">Data Keluarga</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Nama</th>
+                            <th>Pekerjaan</th>
+                            <th>NIK</th>
+                            <th>Hubunagn Keluarga</th>
+                            <th>Status Pernikahan</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Aksi</th>
+                        </tr>
+                        {{range $family := .Families}}
+                            <tr>    
+                                <td>{{$family.NamaLengkap}}</td>
+                                <td>{{$family.Pekerjaan}}</td>
+                                <td>{{$family.Nik}}</td>
+                                <td>{{$family.Hubungan}}</td>
+                                <td>{{$family.Status}}</td>
+                                <td>{{$family.JenisKelamin}}</td>
+                                <td>
+                                    <a href="" class="btn btn-danger btn-sm">Hapus</a>
+                                    <a href="" class="btn btn-warning btn-sm text-white">Edit</a>
+                                </td>
+                            </tr>
+                        {{end}}
+                    </table>
+                </div>
             </div>
         </div>
     {{template "bottom-wrapper"}}
