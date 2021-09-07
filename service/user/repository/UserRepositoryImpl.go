@@ -46,7 +46,7 @@ func (usr userRepositoryImpl) InsertUser(ctx context.Context, user *UserModel.Us
 	return int(last)
 }
 func (usr userRepositoryImpl) GetUser(ctx context.Context, id_user *int) model.User {
-	defer usr.db.Close()
+	// defer usr.db.Close()
 	sql := "SELECT id_user, positions.id,positions.position, nama_depan, nama_belakang, username, email, level FROM users INNER JOIN positions ON users.id_position = positions.id WHERE id_user = ?"
 	rows, err := usr.db.QueryContext(ctx, sql, *id_user)
 	helper.PanicHandler(err)

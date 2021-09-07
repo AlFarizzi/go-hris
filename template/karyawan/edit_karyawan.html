@@ -90,18 +90,21 @@
             </div>
         </div>
 
-        <div class="card" id="tab-view" data-identifier="keluarga" style="display: block;">
+        <div class="card" id="tab-view" data-identifier="keluarga" style="display: none;">
             <div class="card-header">
                 <h3 class="card-title">Data Keluarga</h3>
             </div>
             <div class="card-body">
+                <button type="button" class="btn btn-primary btn-md mb-3" data-toggle="modal" data-target="#exampleModal">
+                    Tambah Anggota Keluarga
+                </button>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <tr>
                             <th>Nama</th>
                             <th>Pekerjaan</th>
                             <th>NIK</th>
-                            <th>Hubunagn Keluarga</th>
+                            <th>Hubungan Keluarga</th>
                             <th>Status Pernikahan</th>
                             <th>Jenis Kelamin</th>
                             <th>Aksi</th>
@@ -115,7 +118,7 @@
                                 <td>{{$family.Status}}</td>
                                 <td>{{$family.JenisKelamin}}</td>
                                 <td>
-                                    <a href="" class="btn btn-danger btn-sm">Hapus</a>
+                                    <a onclick="return confirm('Yakin Akan Menghapus Anggota Keluarga Ini ?')" href="/get/family/delete?id_family={{$family.Id_Family}}&id_user={{$family.Id_User}}" class="btn btn-danger btn-sm">Hapus</a>
                                     <a href="" class="btn btn-warning btn-sm text-white">Edit</a>
                                 </td>
                             </tr>
@@ -124,6 +127,89 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal -->
+<!-- Button trigger modal -->
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h3>Data Keluarga</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/post/family/tambah" method="post">
+            <input type="hidden" name="id_user" value="{{.Id_User}}" id="">
+            <div class="modal-body">
+                <div id="family">
+                    <div class="row" id="data-family">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Nama Lengkap</label>
+                                <input type="text" required name="nama_lengkap" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">NIK</label>
+                                <input type="number" name="nik" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Pekerjaan</label>
+                                <input type="text" required name="pekerjaan" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Tanggal Lahir</label>
+                                <input type="date" name="tgl_lahir" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Hubungan</label>
+                                <select name="hubungan_keluarga" class="form-control">
+                                    {{range $hub := .Hubungan}}
+                                        <option value="{{$hub.Id_Hubungan}}">{{$hub.Hubungan}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Status Pernikahan</label>
+                                <select name="status_pernikahan" class="form-control">
+                                    {{range $status := .Status}}
+                                        <option value="{{$status.Id_Status}}">{{$status.Status}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Jenis Kelamin</label>
+                                <select name="jenis_kelamin" class="form-control">
+                                    {{range $jk := .JK}}
+                                    <option value="{{$jk.Id_JenisKelamin}}">{{$jk.Jenis_Kelamin}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
     {{template "bottom-wrapper"}}
 {{template "footer"}}
 {{end}}

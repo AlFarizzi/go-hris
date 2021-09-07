@@ -55,6 +55,6 @@ func AppendData(nama_lengkap []string, nik []string, pekerjaan []string, tgl_lah
 	return family, err
 }
 
-func InsertData(familyImpl repository.FamilyRepository, id_user int, data *[]model.Family) {
-	familyImpl.BulkInsert(context.Background(), id_user, data)
+func InsertData(familyImpl repository.FamilyRepository, id_user int, data *[]model.Family) bool {
+	return familyImpl.BulkInsert(context.Background(), id_user, data)
 }

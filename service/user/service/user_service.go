@@ -6,11 +6,13 @@ import (
 	"go-hris/helper"
 	"go-hris/model"
 	"go-hris/service/family/repository"
+	HubunganRepository "go-hris/service/hubungan_keluarga/repository"
+	JKRepository "go-hris/service/jenis_kelamin/repository"
 	PositionRepository "go-hris/service/position/repository"
+	StatusRepository "go-hris/service/status_pernikahan/repository"
 	UserRepository "go-hris/service/user/repository"
 	"net/http"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -60,44 +62,24 @@ func DeleteKaryawanService(w http.ResponseWriter, r *http.Request, id int, userI
 	http.Redirect(w, r, "/get/karyawan", http.StatusTemporaryRedirect)
 }
 
-func setUser(userChannel chan model.User, wg *sync.WaitGroup, userImpl UserRepository.UserRepository, id_user int) {
-	defer wg.Done()
-	userChannel <- userImpl.GetUser(context.Background(), &id_user)
-}
-
-func setPosition(wg *sync.WaitGroup, positionsChannel chan []model.Position, positionImpl PositionRepository.PositionRepository) {
-	defer wg.Done()
-	positionsChannel <- positionImpl.GetAllPositions(context.Background())
-}
-
-func setFamily(id_user int, wg *sync.WaitGroup, familyChannel chan []model.UserFamily, familyImpl repository.FamilyRepository) {
-	defer wg.Done()
-	familyChannel <- familyImpl.GetFamily(context.Background(), id_user)
-}
-
-func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository, familyImpl repository.FamilyRepository) {
-	var user model.User
-	var positions []model.Position
-	var families []model.UserFamily
-	var userChannel = make(chan model.User)
-	var positionsChannel = make(chan []model.Position)
-	var familyChannel = make(chan []model.UserFamily)
+func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository, familyImpl repository.FamilyRepository, hubunganImpl HubunganRepository.HubunganKeluargaRepository, statusImpl StatusRepository.StatusPernikahanRepository, JKImpl JKRepository.JenisKelaminRepository) {
+	var ctx = context.Background()
 	id_user, _ := strconv.Atoi(r.URL.Query().Get("id_user"))
-
-	defer close(userChannel)
-	defer close(positionsChannel)
-	defer close(familyChannel)
-	wg := sync.WaitGroup{}
-
-	wg.Add(3)
-	go setUser(userChannel, &wg, userImpl, id_user)
-	go setPosition(&wg, positionsChannel, positionImpl)
-	go setFamily(id_user, &wg, familyChannel, familyImpl)
-	user = <-userChannel
-	positions = <-positionsChannel
-	families = <-familyChannel
-	wg.Wait()
-	helper.DashboardViewParser(w, "edit_karyawan", helper.KARYAWAN, map[string]interface{}{"Families": families, "User": user, "Positions": positions})
+	var user model.User = userImpl.GetUser(ctx, &id_user)
+	var positions []model.Position = positionImpl.GetAllPositions(ctx)
+	var families []model.UserFamily = familyImpl.GetFamily(ctx, id_user)
+	var hubungan []model.HubunganKeluaga = hubunganImpl.GetAll(ctx)
+	var status []model.StatusPernikahan = statusImpl.GetAll(ctx)
+	var jk []model.JenisKelamin = JKImpl.GetAll(ctx)
+	helper.DashboardViewParser(w, "edit_karyawan", helper.KARYAWAN, map[string]interface{}{
+		"Id_User":   id_user,
+		"Families":  families,
+		"User":      user,
+		"Positions": positions,
+		"Hubungan":  hubungan,
+		"Status":    status,
+		"JK":        jk,
+	})
 }
 
 func PostUpdateKaryawanService(w http.ResponseWriter, r *http.Request, id_user int, nama_depan string, nama_belakang string, email string, username string, old_level string, old_id_position int64, level string, id_position string, userImpl UserRepository.UserRepository) {

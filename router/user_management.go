@@ -95,7 +95,10 @@ var GetUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reques
 	userImpl := UserRepository.NewUserRepositoryImpl(db)
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	familyImpl := FamilyRepository.NewFamilyImpl((db))
-	service.GetUpdateUserService(rw, r, userImpl, positionImpl, familyImpl)
+	hubunganImpl := HubunganRepository.NewHubunganKeluargaImpl(db)
+	jkImpl := JKRepository.NewJenisKelaminImpl(db)
+	statausImpl := repository.NewStatusPernikahanImpl(db)
+	service.GetUpdateUserService(rw, r, userImpl, positionImpl, familyImpl, hubunganImpl, statausImpl, jkImpl)
 }
 
 var PostUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {

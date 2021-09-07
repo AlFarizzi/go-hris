@@ -58,6 +58,10 @@ func main() {
 	mux.HandleFunc("/get/status-pernikahan/update", router.GetUpdateStatusPernikahan.ServeHTTP)
 	mux.HandleFunc("/post/status-pernikahan/update", router.PostUpdateStatusPernikahan.ServeHTTP)
 
+	// Family
+	mux.HandleFunc("/post/family/tambah", router.PostFamily.ServeHTTP)
+	mux.HandleFunc("/get/family/delete", router.DeleteFamily.Handler.ServeHTTP)
+
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)
 }

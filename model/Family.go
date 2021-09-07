@@ -11,6 +11,6 @@ type Family struct {
 }
 
 type UserFamily struct {
-	Id_Family                                                   int
+	Id_Family, Id_User                                          int
 	NamaLengkap, Nik, Pekerjaan, Hubungan, Status, JenisKelamin string
 }
