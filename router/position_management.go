@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-var GetAllPosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetAllPosition middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -24,15 +24,15 @@ var GetAllPosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	helper.DashboardViewParser(rw, "position_dashboard", "template/job_position/*.html", map[string]interface{}{
 		"Positions": positions,
 	})
-}
+}}
 
-var GetTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetTambahPosisi middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	helper.DashboardViewParser(rw, "tambah_position", helper.JOB_POSITION, map[string]interface{}{
 		"Url": "/post/position/tambah",
 	})
-}
+}}
 
-var PostTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var PostTambahPosisi middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -41,9 +41,9 @@ var PostTambahPosisi http.HandlerFunc = func(rw http.ResponseWriter, r *http.Req
 	posisi := r.PostFormValue("posisi")
 	position := model.Position{Position: sql.NullString{String: posisi}}
 	PositionService.InputPosisiService(rw, r, position, positionImpl)
-}
+}}
 
-var DeletePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var DeletePosition middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id_position"))
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
@@ -51,9 +51,9 @@ var DeletePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	PositionService.DeletePosisiService(rw, r, positionImpl, int64(id))
-}
+}}
 
-var GetPositionMembers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetPositionMembers middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -66,9 +66,9 @@ var GetPositionMembers http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
 		"Users": members,
 	})
-}
+}}
 
-var GetUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetUpdatePosition middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -82,9 +82,9 @@ var GetUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 		"Url":      "/post/positions/update",
 		"Position": position,
 	})
-}
+}}
 
-var PostUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var PostUpdatePosition middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -93,13 +93,4 @@ var PostUpdatePosition http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 	position_input := r.PostFormValue("posisi")
 	id_position_input, _ := strconv.Atoi(r.PostFormValue("id_position"))
 	PositionService.UpdatePosisiService(rw, r, int64(id_position_input), position_input, positionImpl)
-}
-
-// middleware
-var GetAllPositionWithMiddleware = middleware.Get{Handler: GetAllPosition}
-var GetTambahPosisiWithMiddleware = middleware.Get{Handler: GetTambahPosisi}
-var PostTambahPosisiWithMiddleware = middleware.Post{Handler: PostTambahPosisi}
-var DeletePositionWithMiddleware = middleware.Get{Handler: DeletePosition}
-var GetPositionMembersWithMiddleware = middleware.Get{Handler: GetPositionMembers}
-var GetUpdatePositionWithMiddleware = middleware.Get{Handler: GetUpdatePosition}
-var PostUpdatePositionWithMiddleware = middleware.Post{Handler: PostUpdatePosition}
+}}

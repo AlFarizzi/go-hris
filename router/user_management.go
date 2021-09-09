@@ -16,7 +16,7 @@ import (
 	"strconv"
 )
 
-var GetAllUsers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetAllUsers middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -26,9 +26,9 @@ var GetAllUsers http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request)
 	helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
 		"Users": users,
 	})
-}
+}}
 
-var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var PostTambahKaryawan middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -52,9 +52,9 @@ var PostTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.R
 		FamilyService.InsertData(familyImpl, id_user, &dataFamily)
 	}
 	http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
-}
+}}
 
-var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetTambahKaryawan middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -75,9 +75,9 @@ var GetTambahKaryawan http.HandlerFunc = func(rw http.ResponseWriter, r *http.Re
 		"JK":        jk,
 		"Status":    status,
 	})
-}
+}}
 
-var DeleteUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var DeleteUser middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -86,9 +86,9 @@ var DeleteUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) 
 	id, err := strconv.Atoi(r.URL.Query().Get("id_user"))
 	helper.PanicHandler(err)
 	service.DeleteKaryawanService(rw, r, id, userImple)
-}
+}}
 
-var GetUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetUpdateUser middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -99,9 +99,9 @@ var GetUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reques
 	jkImpl := JKRepository.NewJenisKelaminImpl(db)
 	statausImpl := repository.NewStatusPernikahanImpl(db)
 	service.GetUpdateUserService(rw, r, userImpl, positionImpl, familyImpl, hubunganImpl, statausImpl, jkImpl)
-}
+}}
 
-var PostUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var PostUpdateUser middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -119,11 +119,4 @@ var PostUpdateUser http.HandlerFunc = func(rw http.ResponseWriter, r *http.Reque
 	old_id_position_64, _ := strconv.Atoi(old_id_position)
 
 	service.PostUpdateKaryawanService(rw, r, id_user, nama_depan, nama_belakang, email, username, old_level, int64(old_id_position_64), level, id_position, userImpl)
-}
-
-var GetAllUsersWithMiddleware = middleware.Get{Handler: GetAllUsers}
-var PostTambahKaryawanWithMiddleware = middleware.Post{Handler: PostTambahKaryawan}
-var GetTambahKaryawanWithMiddleware = middleware.Get{Handler: GetTambahKaryawan}
-var DeleteUserWithMiddleware = middleware.Get{Handler: DeleteUser}
-var GetUpdateUserWithMiddleware = middleware.Get{Handler: GetUpdateUser}
-var PostUpdateUserWithMiddleware = middleware.Post{Handler: PostUpdateUser}
+}}

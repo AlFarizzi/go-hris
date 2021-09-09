@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"fmt"
 	"go-hris/helper"
 	"go-hris/middleware"
 	AuthModel "go-hris/model"
@@ -11,11 +10,11 @@ import (
 	"net/http"
 )
 
-var GetLogin http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var GetLogin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	helper.AuthViewParser(rw, "login_layout")
-}
+}}
 
-var PostLogin http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
+var PostLogin middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
 	// get email & password send from form
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
@@ -32,24 +31,17 @@ var PostLogin http.HandlerFunc = func(rw http.ResponseWriter, r *http.Request) {
 	helper.PanicHandler(err)
 
 	// do the login service
-	usr, err = AuthService.LoginService(usr, &password)
-
-	// panil will execute if user not found
-	helper.PanicHandler(err)
-
-	// cookie will be set if login success
-	if usr != nil {
-		helper.SetCookie(rw, map[string]interface{}{
-			"nama":     fmt.Sprintf("%s %s", usr.NamaDepan, usr.NamaBelakang.String),
-			"level":    usr.Level,
-			"email":    usr.Email,
-			"username": usr.Username,
-			"login":    "berhasil login",
-		})
+	login := AuthService.LoginService(rw, r, usr, &password)
+	if login {
+		http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
+	} else {
+		http.Redirect(rw, r, "/", http.StatusSeeOther)
 	}
+}}
 
-}
-
-// Register Router With Middleware
-var GetLoginWithMiddleware = middleware.Get{Handler: GetLogin}
-var PostLoginWithMiddleware = middleware.Post{Handler: PostLogin}
+var Logout middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+	session, _ := helper.Store.Get(r, "user_data")
+	session.Options.MaxAge = -1
+	session.Save(r, rw)
+	http.Redirect(rw, r, "/", http.StatusSeeOther)
+}}
