@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -21,10 +22,12 @@ func PanicHandler(err error) {
 
 func ValidationHelper(cancel context.CancelFunc, err error) string {
 	if err != nil {
-		errors := err.(validator.ValidationErrors)
 		defer cancel()
-		for _, err := range errors {
-			return err.Error()
+		for _, err := range err.(validator.ValidationErrors) {
+			errMsg := strings.Join([]string{
+				err.Field(), Message[err.Tag()].(string),
+			}, " ")
+			return errMsg
 		}
 	}
 	return ""

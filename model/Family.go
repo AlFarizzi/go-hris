@@ -12,5 +12,6 @@ type Family struct {
 
 type UserFamily struct {
 	Id_Family, Id_User                                          int
+	Tgl_Lahir                                                   time.Time
 	NamaLengkap, Nik, Pekerjaan, Hubungan, Status, JenisKelamin string
 }

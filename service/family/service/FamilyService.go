@@ -5,6 +5,9 @@ import (
 	"go-hris/helper"
 	"go-hris/model"
 	"go-hris/service/family/repository"
+	hubungan "go-hris/service/hubungan_keluarga/repository"
+	jk "go-hris/service/jenis_kelamin/repository"
+	status "go-hris/service/status_pernikahan/repository"
 	"strconv"
 	"time"
 
@@ -57,4 +60,13 @@ func AppendData(nama_lengkap []string, nik []string, pekerjaan []string, tgl_lah
 
 func InsertData(familyImpl repository.FamilyRepository, id_user int, data *[]model.Family) bool {
 	return familyImpl.BulkInsert(context.Background(), id_user, data)
+}
+
+func GetUpdateFamily(familyImpl repository.FamilyRepository, hubunganImpl hubungan.HubunganKeluargaRepository, jkImpl jk.JenisKelaminRepository, statusImpl status.StatusPernikahanRepository, id_family int) (model.UserFamily, []model.HubunganKeluaga, []model.StatusPernikahan, []model.JenisKelamin) {
+	ctx := context.Background()
+	family := familyImpl.GetEditFamily(ctx, id_family)
+	hubungan := hubunganImpl.GetAll(ctx)
+	status := statusImpl.GetAll(ctx)
+	jk := jkImpl.GetAll(ctx)
+	return family, hubungan, status, jk
 }

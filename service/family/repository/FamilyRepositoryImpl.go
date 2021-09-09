@@ -34,6 +34,7 @@ func (impl familyRepositoryImpl) GetFamily(ctx context.Context, id_user int) []m
 
 	rows, err := impl.db.QueryContext(ctx, sql, id_user)
 	helper.PanicHandler(err)
+	defer rows.Close()
 	for rows.Next() {
 		each := model.UserFamily{}
 		err := rows.Scan(&each.Id_Family, &each.Id_User, &each.NamaLengkap, &each.Pekerjaan, &each.Nik, &each.Hubungan, &each.Status, &each.JenisKelamin)
@@ -49,5 +50,28 @@ func (impl familyRepositoryImpl) DeleteFamily(ctx context.Context, id_family int
 	helper.PanicHandler(err)
 	affected, err := result.RowsAffected()
 	helper.PanicHandler(err)
+	return affected > 0
+}
+
+func (impl familyRepositoryImpl) GetEditFamily(ctx context.Context, id_family int) model.UserFamily {
+	sql := "SELECT family.tgl_lahir,family.id,family.id_user, nama_lengkap,pekerjaan,nik,hubungan.hubungan,status_pernikahan.status,jenis_kelamin.jenis_kelamin FROM family INNER JOIN hubungan ON hubungan.id = family.id_hubungan INNER JOIN status_pernikahan ON status_pernikahan.id = family.id_status INNER JOIN jenis_kelamin ON jenis_kelamin.id  = family.id_jk WHERE family.id = ?"
+
+	each := model.UserFamily{}
+	rows, err := impl.db.QueryContext(ctx, sql, id_family)
+	helper.PanicHandler(err)
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.Scan(&each.Tgl_Lahir, &each.Id_Family, &each.Id_User, &each.NamaLengkap, &each.Pekerjaan, &each.Nik, &each.Hubungan, &each.Status, &each.JenisKelamin)
+		helper.PanicHandler(err)
+	}
+	return each
+}
+
+func (impl familyRepositoryImpl) PostUpdateFamily(ctx context.Context, family *model.Family) bool {
+	sql := "UPDATE family SET id_hubungan = ?, id_status = ?, id_jk = ?, nama_lengkap = ?, nik = ?, pekerjaan = ?, tgl_lahir = ? WHERE id = ?"
+	result, err := impl.db.ExecContext(ctx, sql, family.Id_Hubungan, family.Id_Status, family.Id_jk, family.Nama_Lengkap, family.Nik, family.Pekerjaan, family.Tgl_Lahir, family.Id_Family)
+	helper.PanicHandler(err)
+	affected, _ := result.RowsAffected()
 	return affected > 0
 }

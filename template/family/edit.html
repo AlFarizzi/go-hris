@@ -1,0 +1,91 @@
+{{define "edit_family"}}
+{{template "header"}}
+    {{template "top-wrapper"}}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Edit Family</h3>
+            </div>
+            <div class="card-body">
+                <form action="/post/family/update" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Nama Lengkap</label>
+                                <input value="{{.Family.NamaLengkap}}" type="text" name="nama_lengkap" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Pekerjaan</label>
+                                <input value="{{.Family.Pekerjaan}}" type="text" name="pekerjaan" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="" class="form-label">NIK</label>
+                                <input value="{{.Family.Nik}}" type="number" name="nik" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Tanggal Lahir</label>
+                                <input value={{.Family.Tgl_Lahir}} type="date" name="tgl_lahir" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Hubungan</label>
+                                <select name="hubungan_keluarga" class="form-control">
+                                    <option value="0">Pilih Hubungan Keluarga</option>
+                                    {{range $hub := .Hubungan}}
+                                        <option value="{{$hub.Id_Hubungan}}">{{$hub.Hubungan}}</option>
+                                    {{end}}
+                                </select>
+                                <small class="text-danger">
+                                    Hubungan keluarga Saat Ini <b>{{.Family.Hubungan}}</b> Harap Pilih Hubungan Keluarga Seperti Saat Ini Jika Hubungan Keluarga Tidak DiUpdate
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Status Pernikahan</label>
+                                <select name="status_pernikahan" class="form-control">
+                                    <option value="0">Pilih Status Pernikahan</option>
+                                    {{range $status := .Status}}
+                                        <option value="{{$status.Id_Status}}">{{$status.Status}}</option>
+                                    {{end}}
+                                </select>
+                                <small class="text-danger">
+                                    Status Pernikahan Saat Ini <b>{{.Family.Status}}</b> Harap Pilih Status Pernikahan Seperti Saat Ini Jika Status Pernikahan Tidak DiUpdate
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="form-label">Jenis Kelamin</label>
+                                <select name="jenis_kelamin" class="form-control">
+                                    <option value="0">Pilih Jenis Kelamin</option>
+                                    {{range $jk := .JK}}
+                                    <option value="{{$jk.Id_JenisKelamin}}">{{$jk.Jenis_Kelamin}}</option>
+                                    {{end}}
+                                </select>
+                                <small class="text-danger">
+                                    Jenis Kelamin Saat Ini <b>{{.Family.JenisKelamin}}</b> Harap Pilih Jenis Kelamin Seperti Saat Ini Jika Jenis Kelamin Tidak DiUpdate
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id_family" value="{{.Id_Family}}">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-sm">Edit Family</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {{template "bottom-wrapper"}}
+{{template "footer"}}
+{{end}}

@@ -13,6 +13,6 @@ func AuthViewParser(w http.ResponseWriter, view string) {
 var partials = template.Must(template.ParseGlob("template/dashboard_partials/*.html"))
 
 func DashboardViewParser(w http.ResponseWriter, view string, path string, data map[string]interface{}) {
-	tmp := template.Must(partials.ParseGlob(path))
+	tmp := template.Must(partials.New(view).ParseGlob(path))
 	tmp.ExecuteTemplate(w, view, data)
 }
