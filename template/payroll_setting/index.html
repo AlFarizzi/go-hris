@@ -4,7 +4,7 @@
 <div class="card">
    <div class="card-header">
        <h3 class="card-title">Data Payroll Components</h3>
-       <a href="/get/status-pernikahan/tambah" class="btn btn-primary btn-sm">Tambah Payroll Component</a>
+       <a href="/get/payroll-component/tambah" class="btn btn-primary btn-sm">Tambah Payroll Component</a>
    </div>
    <div class="card-body">
        <div class="table-responsive">
@@ -20,7 +20,7 @@
                     <td>{{$c.Nominal}}</td>
                     <td>
                         <a onclick="return confirm('Yakin Akan Menghapus Data Ini')" href="/get/payroll-component/delete?id_component={{$c.Id_Component}}" class="btn btn-danger btn-sm">Hapus</a>
-                        <a class="btn btn-warning btn-sm text-white">Update</a>
+                        <a href="/get/payroll-component/update?id_component={{$c.Id_Component}}" class="btn btn-warning btn-sm text-white">Update</a>
                     </td>
                 </tr>
                {{end}}

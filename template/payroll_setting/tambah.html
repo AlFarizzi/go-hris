@@ -1,0 +1,45 @@
+{{define "tambah_payroll_component"}}
+{{template "header"}}
+{{template "top-wrapper"}}
+  <div class="card">
+      <div class="card-header">
+          <h3 class="card-title">
+              Tambah Payroll Component
+          </h3>
+      </div>
+        <div class="card-body">
+            <form action="{{.Url}}" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="hidden" name="id_component" value="{{.Data.Id_Component}}">
+                        <div class="form-group">
+                            <label for="" class="form-label">Payroll Component</label>
+                            <input 
+                            {{if eq .Url "/post/payroll-component/update"}}
+                            value="{{.Data.Component}}"
+                            {{end}}
+                             type="text" name="component" required class="form-control" placeholder="Masukan Nama Payroll Component">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="" class="form-label">Nominal</label>
+                            <input value="{{.Data.Nominal}}" type="number" name="nominal" required class="form-control" placeholder="Masukan Nominal Payroll Component">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        {{if eq .Url "/post/payroll-component/update"}}
+                        Update Payroll Component
+                        {{else}}
+                        Tambah Payroll Component
+                        {{end}}
+                    </button>
+                </div>
+            </form>
+        </div>
+  </div>
+{{template "bottom-wrapper"}}
+{{template "footer"}}
+{{end}}

@@ -69,6 +69,10 @@ func main() {
 	// Payroll Component
 	mux.HandleFunc("/get/payroll-component", middleware.Auth(router.GetPayrollComponents.ServeHTTP))
 	mux.HandleFunc("/get/payroll-component/delete", middleware.Auth(router.DeletePayrollComponent.ServeHTTP))
+	mux.HandleFunc("/get/payroll-component/tambah", middleware.Auth(router.GetTambahPayrollComponent.ServeHTTP))
+	mux.HandleFunc("/post/payroll-component/tambah", middleware.Auth(router.PostTambahPayrollComponent.ServeHTTP))
+	mux.HandleFunc("/get/payroll-component/update", middleware.Auth(router.GetUpdatePayrollComponent.ServeHTTP))
+	mux.HandleFunc("/post/payroll-component/update", middleware.Auth(router.PostUpdatePayrollComponent.ServeHTTP))
 
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)
