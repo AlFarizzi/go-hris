@@ -17,15 +17,23 @@ import (
 )
 
 var GetAllUsers middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+	offsetParam := r.URL.Query().Get("offset")
+	tipe := r.URL.Query().Get("type")
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
 	userImpl := UserRepository.NewUserRepositoryImpl(db)
-
-	users := userImpl.GetAllUser(context.Background())
-	helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
-		"Users": users,
-	})
+	users, prev, next := service.GetAllUser(context.Background(), userImpl, offsetParam, tipe)
+	switch len(users) == 0 {
+	case true:
+		http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
+	default:
+		helper.DashboardViewParser(rw, "karyawan_dashboard", helper.KARYAWAN, map[string]interface{}{
+			"Users": users,
+			"Prev":  prev,
+			"Next":  next,
+		})
+	}
 }}
 
 var PostTambahKaryawan middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {

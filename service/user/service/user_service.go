@@ -19,6 +19,15 @@ import (
 	"tawesoft.co.uk/go/dialog"
 )
 
+func GetAllUser(ctx context.Context, userImpl UserRepository.UserRepository, offset interface{}, tipe string) ([]model.User, int, int) {
+	newOffset, _ := strconv.Atoi(offset.(string))
+	if offset == "" {
+		return userImpl.GetAllUser(ctx, 0), 0, 10
+	}
+
+	return userImpl.GetAllUser(ctx, newOffset), newOffset - 10, newOffset + 10
+}
+
 func InputKaryawanService(w http.ResponseWriter, r *http.Request, nama_depan string, nama_belakang string, username string, email string, password string, level string, id_position string, userImpl UserRepository.UserRepository) int {
 	validate := validator.New()
 	var id int

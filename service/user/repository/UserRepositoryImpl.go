@@ -18,11 +18,11 @@ func NewUserRepositoryImpl(dbParam *sql.DB) UserRepository {
 	return userRepositoryImpl{db: dbParam}
 }
 
-func (usr userRepositoryImpl) GetAllUser(ctx context.Context) []UserModel.User {
+func (usr userRepositoryImpl) GetAllUser(ctx context.Context, offset int) []UserModel.User {
 	defer usr.db.Close()
 	var users []UserModel.User
-	sql := "SELECT id_user, positions.position, nama_depan, nama_belakang, username, email, password, level, created_at FROM users INNER JOIN positions ON users.id_position = positions.id"
-	rows, err := usr.db.QueryContext(ctx, sql)
+	sql := "SELECT id_user, positions.position, nama_depan, nama_belakang, username, email, password, level, created_at FROM users INNER JOIN positions ON users.id_position = positions.id LIMIT ?, 10"
+	rows, err := usr.db.QueryContext(ctx, sql, offset)
 	helper.PanicHandler(err)
 	defer rows.Close()
 

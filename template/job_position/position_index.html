@@ -12,6 +12,7 @@
                <thead>
                    <tr>
                        <th>Posisi</th>
+                       <th>Gaji</th>
                        <th>Aksi</th>
                    </tr>
                </thead>
@@ -19,6 +20,7 @@
                    {{range $position := .Positions}}
                        <tr>
                            <td>{{$position.Position.String}}</td>
+                           <td>{{$position.Salary}}</td>
                            <td>
                               <a onclick="return confirm('Yakin Akan Menghapus Posisi Ini ?')" href="/get/position/delete?id_position={{$position.Id_Position.Int64}}" class="btn btn-danger btn-sm">Hapus</a>
                               <a href="/get/positions/update?id_position={{$position.Id_Position.Int64}}"class="btn btn-warning btn-sm text-white">Update</a>

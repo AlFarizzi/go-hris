@@ -36,8 +36,8 @@ func DeletePosisiService(w http.ResponseWriter, r *http.Request, positionImpl Po
 	http.Redirect(w, r, "/get/position", http.StatusFound)
 }
 
-func UpdatePosisiService(w http.ResponseWriter, r *http.Request, id_position_input int64, position_input string, positionImpl PositionRepository.PositionRepository) {
-	position := model.Position{Id_Position: sql.NullInt64{Int64: id_position_input}, Position: sql.NullString{String: position_input}}
+func UpdatePosisiService(w http.ResponseWriter, r *http.Request, id_position_input int64, position_input string, salary_input int, positionImpl PositionRepository.PositionRepository) {
+	position := model.Position{Id_Position: sql.NullInt64{Int64: id_position_input}, Position: sql.NullString{String: position_input}, Salary: salary_input}
 	if position.Position.String == "" {
 		dialog.Alert("Update Position Gagal")
 	} else {

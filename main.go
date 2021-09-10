@@ -66,6 +66,10 @@ func main() {
 	mux.HandleFunc("/get/family/update", middleware.Auth(router.GetUpdateFamily.ServeHTTP))
 	mux.HandleFunc("/post/family/update", middleware.Auth(router.PostFamilyUpdate.ServeHTTP))
 
+	// Payroll Component
+	mux.HandleFunc("/get/payroll-component", middleware.Auth(router.GetPayrollComponents.ServeHTTP))
+	mux.HandleFunc("/get/payroll-component/delete", middleware.Auth(router.DeletePayrollComponent.ServeHTTP))
+
 	helper.StaticFile(&public, mux)
 	helper.CreateServer("localhost:8080", mux)
 }

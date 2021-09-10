@@ -17,14 +17,14 @@ func NewPositionRepositoryImpl(db *sql.DB) PositionRepository {
 
 func (impl *positionRepositoryImpl) GetAllPositions(ctx context.Context) []model.Position {
 	var positions []model.Position
-	sql := "SELECT id,position FROM positions"
+	sql := "SELECT id,position,salary FROM positions"
 	rows, err := impl.db.QueryContext(ctx, sql)
 	helper.PanicHandler(err)
 	defer rows.Close()
 
 	for rows.Next() {
 		each := model.Position{}
-		err := rows.Scan(&each.Id_Position, &each.Position)
+		err := rows.Scan(&each.Id_Position, &each.Position, &each.Salary)
 		helper.PanicHandler(err)
 		positions = append(positions, each)
 	}
@@ -32,8 +32,8 @@ func (impl *positionRepositoryImpl) GetAllPositions(ctx context.Context) []model
 }
 
 func (impl *positionRepositoryImpl) TambahPosisi(ctx context.Context, position model.Position) bool {
-	sql := "INSERT INTO positions(position) VALUES(?)"
-	result, err := impl.db.ExecContext(ctx, sql, position.Position.String)
+	sql := "INSERT INTO positions(position,salary) VALUES(?, ?)"
+	result, err := impl.db.ExecContext(ctx, sql, position.Position.String, position.Salary)
 	helper.PanicHandler(err)
 	affected, _ := result.RowsAffected()
 	return affected > 0
@@ -62,23 +62,23 @@ func (impl positionRepositoryImpl) GetPositionMembers(ctx context.Context, posit
 }
 
 func (impl positionRepositoryImpl) GetPosition(ctx context.Context, position model.Position) model.Position {
-	sql := "SELECT id,position FROM positions WHERE id = ?"
+	sql := "SELECT id,position,salary FROM positions WHERE id = ?"
 	rows, err := impl.db.QueryContext(ctx, sql, position.Id_Position.Int64)
 	helper.PanicHandler(err)
 	defer rows.Close()
 
 	each := model.Position{}
 	if rows.Next() {
-		err := rows.Scan(&each.Id_Position, &each.Position)
+		err := rows.Scan(&each.Id_Position, &each.Position, &each.Salary)
 		helper.PanicHandler(err)
 	}
 	return each
 }
 
 func (impl positionRepositoryImpl) UpdatePosition(ctx context.Context, position model.Position) bool {
-	sql := "UPDATE positions SET position = ? WHERE id = ?"
+	sql := "UPDATE positions SET position = ?, salary = ? WHERE id = ?"
 
-	result, err := impl.db.ExecContext(ctx, sql, position.Position.String, position.Id_Position.Int64)
+	result, err := impl.db.ExecContext(ctx, sql, position.Position.String, position.Salary, position.Id_Position.Int64)
 	helper.PanicHandler(err)
 
 	affected, _ := result.RowsAffected()

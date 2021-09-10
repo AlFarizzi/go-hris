@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	GetAllUser(ctx context.Context) []UserModel.User
+	GetAllUser(ctx context.Context, offset int) []UserModel.User
 	InsertUser(ctx context.Context, user *UserModel.User, id_position *string) int
 	UpdateUser(ctx context.Context, user *UserModel.User) bool
 	DeleteUser(ctx context.Context, user *UserModel.User) bool

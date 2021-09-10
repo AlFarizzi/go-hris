@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"go-hris/helper"
 	"go-hris/middleware"
 	"go-hris/model"
@@ -20,7 +19,6 @@ var GetAllPosition middleware.Get = middleware.Get{Handler: func(rw http.Respons
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	positions := positionImpl.GetAllPositions(context.Background())
-	fmt.Println(positions)
 	helper.DashboardViewParser(rw, "position_dashboard", "template/job_position/*.html", map[string]interface{}{
 		"Positions": positions,
 	})
@@ -39,7 +37,8 @@ var PostTambahPosisi middleware.Post = middleware.Post{Handler: func(rw http.Res
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	posisi := r.PostFormValue("posisi")
-	position := model.Position{Position: sql.NullString{String: posisi}}
+	salary, _ := strconv.Atoi(r.PostFormValue("salary"))
+	position := model.Position{Position: sql.NullString{String: posisi}, Salary: salary}
 	PositionService.InputPosisiService(rw, r, position, positionImpl)
 }}
 
@@ -77,7 +76,6 @@ var GetUpdatePosition middleware.Get = middleware.Get{Handler: func(rw http.Resp
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	pstn := model.Position{Id_Position: sql.NullInt64{Int64: int64(id_position)}}
 	position := positionImpl.GetPosition(context.Background(), pstn)
-
 	helper.DashboardViewParser(rw, "tambah_position", helper.JOB_POSITION, map[string]interface{}{
 		"Url":      "/post/positions/update",
 		"Position": position,
@@ -91,6 +89,7 @@ var PostUpdatePosition middleware.Post = middleware.Post{Handler: func(rw http.R
 
 	positionImpl := PositionRepository.NewPositionRepositoryImpl(db)
 	position_input := r.PostFormValue("posisi")
+	salary_input, _ := strconv.Atoi(r.PostFormValue("salary"))
 	id_position_input, _ := strconv.Atoi(r.PostFormValue("id_position"))
-	PositionService.UpdatePosisiService(rw, r, int64(id_position_input), position_input, positionImpl)
+	PositionService.UpdatePosisiService(rw, r, int64(id_position_input), position_input, salary_input, positionImpl)
 }}

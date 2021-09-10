@@ -16,6 +16,10 @@
                  <input value="{{if eq .Url "/post/positions/update"}} {{.Position.Position.String}} {{end}}" type="text" name="posisi" class="form-control" placeholder="Masukan Nama Posisi">
               </div>
               <div class="form-group">
+                <label for="" class="form-label">Salary</label>
+                <input value="{{.Position.Salary}}" type="number" name="salary" class="form-control">
+              </div>
+              <div class="form-group">
                  <button type="submit" class="btn btn-primary btn-sm">
                   {{if eq .Url "/post/positions/update"}}
                     Update Posisi

@@ -20,7 +20,7 @@ func LoginService(w http.ResponseWriter, r *http.Request, usr *AuthModel.User, p
 			session.Values["level"] = usr.Level
 			session.Values["id_user"] = usr.Id_User
 			session.Values["login"] = true
-			session.Options.MaxAge = 10
+			helper.Store.MaxAge(3600)
 			session.Save(r, w)
 			dialog.Alert("Berhasil Login")
 			return true
