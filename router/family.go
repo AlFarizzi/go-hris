@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"go-hris/helper"
-	"go-hris/middleware"
 	"go-hris/model"
 	"go-hris/service/family/repository"
 	"go-hris/service/family/service"
@@ -15,12 +14,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/julienschmidt/httprouter"
 	"tawesoft.co.uk/go/dialog"
 )
 
-var PostFamily middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithCancel(context.Background())
+var PostFamily httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	db, err := helper.Connection()
+	helper.PanicHandler(err)
+	defer db.Close()
+
 	id_user, _ := strconv.Atoi(r.PostFormValue("id_user"))
 	nama_lengkap := r.PostFormValue("nama_lengkap")
 	nik := r.PostFormValue("nik")
@@ -31,32 +33,15 @@ var PostFamily middleware.Post = middleware.Post{Handler: func(rw http.ResponseW
 	jk, _ := strconv.Atoi(r.PostFormValue("jenis_kelamin"))
 
 	data := model.Family{Id_User: id_user, Id_Hubungan: hubungan, Id_Status: status, Id_jk: jk, Nama_Lengkap: nama_lengkap, Nik: nik, Pekerjaan: pekerjaan, Tgl_Lahir: tgl_lahir}
-	validation := validator.New()
-	err := validation.Struct(data)
-	msg := helper.ValidationHelper(cancel, err)
-
-	select {
-	case <-ctx.Done():
-		dialog.Alert(msg)
-	default:
-		db, err := helper.Connection()
-		helper.PanicHandler(err)
-		defer db.Close()
-		familyImpl := repository.NewFamilyImpl(db)
-		result := service.InsertData(familyImpl, id_user, &[]model.Family{data})
-		if result {
-			dialog.Alert("Anggota keluarga Berhasil Ditambahkan")
-		} else {
-			dialog.Alert("Anggota Keluarga Gagal Ditambahkan")
-		}
-	}
+	familyImpl := repository.NewFamilyImpl(db)
+	service.InsertData(familyImpl, id_user, &[]model.Family{data})
 	url := strings.Join([]string{"/get/karyawan/edit?id_user=", strconv.Itoa(id_user)}, "")
 	http.Redirect(rw, r, url, http.StatusSeeOther)
-}}
+}
 
-var DeleteFamily middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	id_family, _ := strconv.Atoi(r.URL.Query().Get("id_family"))
-	id_user, _ := strconv.Atoi(r.URL.Query().Get("id_user"))
+var DeleteFamily httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id_family, _ := strconv.Atoi(p.ByName("id_family"))
+	id_user, _ := strconv.Atoi(p.ByName("id_family"))
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -67,16 +52,16 @@ var DeleteFamily middleware.Get = middleware.Get{Handler: func(rw http.ResponseW
 	} else {
 		dialog.Alert("Anggota Keluarga Gagal Dihapus")
 	}
-	url := strings.Join([]string{"/get/karyawan/edit?id_user=", strconv.Itoa(id_user)}, "")
+	url := strings.Join([]string{"/get/karyawan/edit/", strconv.Itoa(id_user)}, "")
 	http.Redirect(rw, r, url, http.StatusSeeOther)
-}}
+}
 
-var GetUpdateFamily middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetUpdateFamily httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
 
-	id_family, _ := strconv.Atoi(r.URL.Query().Get("id_family"))
+	id_family, _ := strconv.Atoi(p.ByName("id_family"))
 	familyImpl := repository.NewFamilyImpl(db)
 	hubunganImpl := hubungan.NewHubunganKeluargaImpl(db)
 	jkImpl := jk.NewJenisKelaminImpl(db)
@@ -91,10 +76,12 @@ var GetUpdateFamily middleware.Get = middleware.Get{Handler: func(rw http.Respon
 		"Status":    status,
 		"JK":        jk,
 	})
-}}
+}
 
-var PostFamilyUpdate middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithCancel(context.Background())
+var PostFamilyUpdate httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	db, err := helper.Connection()
+	helper.PanicHandler(err)
+	defer db.Close()
 	id_family, _ := strconv.Atoi(r.PostFormValue("id_family"))
 	nama_lengkap := r.PostFormValue("nama_lengkap")
 	nik := r.PostFormValue("nik")
@@ -105,25 +92,8 @@ var PostFamilyUpdate middleware.Post = middleware.Post{Handler: func(rw http.Res
 	jk, _ := strconv.Atoi(r.PostFormValue("jenis_kelamin"))
 
 	data := model.Family{Id_Family: id_family, Id_Hubungan: hubungan, Id_Status: status, Id_jk: jk, Nama_Lengkap: nama_lengkap, Nik: nik, Pekerjaan: pekerjaan, Tgl_Lahir: tgl_lahir}
-	validation := validator.New()
-	err := validation.Struct(data)
-	msg := helper.ValidationHelper(cancel, err)
-
-	select {
-	case <-ctx.Done():
-		dialog.Alert(msg)
-	default:
-		db, err := helper.Connection()
-		helper.PanicHandler(err)
-		defer db.Close()
-		familyImpl := repository.NewFamilyImpl(db)
-		result := familyImpl.PostUpdateFamily(ctx, &data)
-		if result {
-			dialog.Alert("Data Keluarga Berhasil Diupdate")
-		} else {
-			dialog.Alert("Data Keluarga Gagal Diupdate")
-		}
-	}
+	familyImpl := repository.NewFamilyImpl(db)
+	service.PostUpdateFamily(data, familyImpl)
 	url := strings.Join([]string{"/get/family/update?id_family=", strconv.Itoa(id_family)}, "")
 	http.Redirect(rw, r, url, http.StatusSeeOther)
-}}
+}

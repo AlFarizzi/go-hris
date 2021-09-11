@@ -3,12 +3,14 @@ package helper
 import (
 	"net/http"
 	"time"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-func CreateServer(host string, mux *http.ServeMux) {
+func CreateServer(host string, router *httprouter.Router) {
 	server := http.Server{
 		Addr:    host,
-		Handler: mux,
+		Handler: router,
 	}
 
 	err := server.ListenAndServe()

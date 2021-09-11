@@ -22,9 +22,9 @@
                            <td>{{$position.Position.String}}</td>
                            <td>{{$position.Salary}}</td>
                            <td>
-                              <a onclick="return confirm('Yakin Akan Menghapus Posisi Ini ?')" href="/get/position/delete?id_position={{$position.Id_Position.Int64}}" class="btn btn-danger btn-sm">Hapus</a>
-                              <a href="/get/positions/update?id_position={{$position.Id_Position.Int64}}"class="btn btn-warning btn-sm text-white">Update</a>
-                              <a href="/get/positions/members?id_position={{$position.Id_Position.Int64}}" class="btn btn-success btn-sm text-white">Member</a>
+                              <a onclick="return confirm('Yakin Akan Menghapus Posisi Ini ?')" href="/get/position/delete/{{$position.Id_Position.Int64}}" class="btn btn-danger btn-sm">Hapus</a>
+                              <a href="/get/positions/update/{{$position.Id_Position.Int64}}"class="btn btn-warning btn-sm text-white">Update</a>
+                              <a href="/get/positions/members/{{$position.Id_Position.Int64}}" class="btn btn-success btn-sm text-white">Member</a>
                            </td>
                        </tr>
                    {{end}}

@@ -19,8 +19,8 @@
                <tr>
                    <td>{{$hubungan.Hubungan}}</td>
                    <td>
-                       <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/hubungan-keluarga/delete?id_hubungan={{$hubungan.Id_Hubungan}}" class="btn btn-danger btn-sm">Hapus</a>
-                       <a href="/get/hubungan-keluarga/update?id_hubungan={{$hubungan.Id_Hubungan}}" class="btn btn-warning btn-sm text-white">Update</a>
+                       <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/hubungan-keluarga/delete/{{$hubungan.Id_Hubungan}}" class="btn btn-danger btn-sm">Hapus</a>
+                       <a href="/get/hubungan-keluarga/update/{{$hubungan.Id_Hubungan}}" class="btn btn-warning btn-sm text-white">Update</a>
                    </td>
                </tr>
                {{end}}

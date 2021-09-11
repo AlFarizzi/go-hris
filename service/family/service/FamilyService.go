@@ -58,8 +58,13 @@ func AppendData(nama_lengkap []string, nik []string, pekerjaan []string, tgl_lah
 	return family, err
 }
 
-func InsertData(familyImpl repository.FamilyRepository, id_user int, data *[]model.Family) bool {
-	return familyImpl.BulkInsert(context.Background(), id_user, data)
+func InsertData(familyImpl repository.FamilyRepository, id_user int, data *[]model.Family) {
+	result := familyImpl.BulkInsert(context.Background(), id_user, data)
+	if result {
+		dialog.Alert("Anggota keluarga Berhasil Ditambahkan")
+	} else {
+		dialog.Alert("Anggota Keluarga Gagal Ditambahkan")
+	}
 }
 
 func GetUpdateFamily(familyImpl repository.FamilyRepository, hubunganImpl hubungan.HubunganKeluargaRepository, jkImpl jk.JenisKelaminRepository, statusImpl status.StatusPernikahanRepository, id_family int) (model.UserFamily, []model.HubunganKeluaga, []model.StatusPernikahan, []model.JenisKelamin) {
@@ -69,4 +74,22 @@ func GetUpdateFamily(familyImpl repository.FamilyRepository, hubunganImpl hubung
 	status := statusImpl.GetAll(ctx)
 	jk := jkImpl.GetAll(ctx)
 	return family, hubungan, status, jk
+}
+
+func PostUpdateFamily(data model.Family, familyImpl repository.FamilyRepository) {
+	ctx, cancel := context.WithCancel(context.Background())
+	validation := validator.New()
+	err := validation.Struct(data)
+	msg := helper.ValidationHelper(cancel, err)
+	select {
+	case <-ctx.Done():
+		dialog.Alert(msg)
+	default:
+		result := familyImpl.PostUpdateFamily(ctx, &data)
+		if result {
+			dialog.Alert("Data Keluarga Berhasil Diupdate")
+		} else {
+			dialog.Alert("Data Keluarga Gagal Diupdate")
+		}
+	}
 }

@@ -18,8 +18,8 @@
                     <tr>
                         <td>{{$jk.Jenis_Kelamin}}</td>
                         <td>
-                            <a onclick="return confirm('Apakah Anda Yakin Akan Menghapus Jenis Kelamin Ini ?')" href="/get/jenis-kelamin/delete?id_jenis={{$jk.Id_JenisKelamin}}" class="btn btn-danger btn-sm">Hapus</a>
-                            <a href="/get/jenis-kelamin/update?id_jenis={{$jk.Id_JenisKelamin}}" class="btn btn-warning btn-sm text-white">Edit</a>
+                            <a onclick="return confirm('Apakah Anda Yakin Akan Menghapus Jenis Kelamin Ini ?')" href="/get/jenis-kelamin/delete/{{$jk.Id_JenisKelamin}}" class="btn btn-danger btn-sm">Hapus</a>
+                            <a href="/get/jenis-kelamin/update/{{$jk.Id_JenisKelamin}}" class="btn btn-warning btn-sm text-white">Edit</a>
                         </td>
                     </tr>                
                 {{end}}

@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"go-hris/helper"
-	"go-hris/middleware"
 	FamilyRepository "go-hris/service/family/repository"
 	FamilyService "go-hris/service/family/service"
 	HubunganRepository "go-hris/service/hubungan_keluarga/repository"
@@ -14,9 +13,11 @@ import (
 	"go-hris/service/user/service"
 	"net/http"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-var GetAllUsers middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetAllUsers httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	offsetParam := r.URL.Query().Get("offset")
 	tipe := r.URL.Query().Get("type")
 	db, err := helper.Connection()
@@ -34,9 +35,9 @@ var GetAllUsers middleware.Get = middleware.Get{Handler: func(rw http.ResponseWr
 			"Next":  next,
 		})
 	}
-}}
+}
 
-var PostTambahKaryawan middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var PostTambahKaryawan httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -56,13 +57,15 @@ var PostTambahKaryawan middleware.Post = middleware.Post{Handler: func(rw http.R
 	dataFamily, err := FamilyService.AppendData(r.PostForm["nama_lengkap"], r.PostForm["nik"], r.PostForm["pekerjaan"], r.PostForm["tgl_lahir"], r.PostForm["hubungan_keluarga"], r.PostForm["status_pernikahan"], r.PostForm["jenis_kelamin"])
 	if err == nil {
 		id_user := service.InputKaryawanService(rw, r, nama_depan, nama_belakang, username, email, password, level, id_position, userImpl)
-		familyImpl := FamilyRepository.NewFamilyImpl(db)
-		FamilyService.InsertData(familyImpl, id_user, &dataFamily)
+		if id_user > 0 {
+			familyImpl := FamilyRepository.NewFamilyImpl(db)
+			FamilyService.InsertData(familyImpl, id_user, &dataFamily)
+		}
 	}
 	http.Redirect(rw, r, "/get/karyawan", http.StatusSeeOther)
-}}
+}
 
-var GetTambahKaryawan middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetTambahKaryawan httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -83,20 +86,20 @@ var GetTambahKaryawan middleware.Get = middleware.Get{Handler: func(rw http.Resp
 		"JK":        jk,
 		"Status":    status,
 	})
-}}
+}
 
-var DeleteUser middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var DeleteUser httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
 
 	userImple := UserRepository.NewUserRepositoryImpl(db)
-	id, err := strconv.Atoi(r.URL.Query().Get("id_user"))
+	id, err := strconv.Atoi(p.ByName("id_user"))
 	helper.PanicHandler(err)
 	service.DeleteKaryawanService(rw, r, id, userImple)
-}}
+}
 
-var GetUpdateUser middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetUpdateUser httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -106,10 +109,10 @@ var GetUpdateUser middleware.Get = middleware.Get{Handler: func(rw http.Response
 	hubunganImpl := HubunganRepository.NewHubunganKeluargaImpl(db)
 	jkImpl := JKRepository.NewJenisKelaminImpl(db)
 	statausImpl := repository.NewStatusPernikahanImpl(db)
-	service.GetUpdateUserService(rw, r, userImpl, positionImpl, familyImpl, hubunganImpl, statausImpl, jkImpl)
-}}
+	service.GetUpdateUserService(rw, p.ByName("id_user"), userImpl, positionImpl, familyImpl, hubunganImpl, statausImpl, jkImpl)
+}
 
-var PostUpdateUser middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var PostUpdateUser httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	defer db.Close()
@@ -127,4 +130,4 @@ var PostUpdateUser middleware.Post = middleware.Post{Handler: func(rw http.Respo
 	old_id_position_64, _ := strconv.Atoi(old_id_position)
 
 	service.PostUpdateKaryawanService(rw, r, id_user, nama_depan, nama_belakang, email, username, old_level, int64(old_id_position_64), level, id_position, userImpl)
-}}
+}

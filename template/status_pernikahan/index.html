@@ -18,8 +18,8 @@
                 <tr>
                     <td>{{$status.Status}}</td>
                     <td>
-                        <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/status-pernikahan/delete?id_status={{$status.Id_Status}}" class="btn btn-danger btn-sm">Hapus</a>
-                        <a href="/get/status-pernikahan/update?id_status={{$status.Id_Status}}" class="btn btn-warning btn-sm text-white">Update</a>
+                        <a onclick="return confirm('Yakin Akan Menghapus Data Ini ?')" href="/get/status-pernikahan/delete/{{$status.Id_Status}}" class="btn btn-danger btn-sm">Hapus</a>
+                        <a href="/get/status-pernikahan/update/{{$status.Id_Status}}" class="btn btn-warning btn-sm text-white">Update</a>
                     </td>
                 </tr>
                 {{end}}

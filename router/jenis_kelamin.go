@@ -3,14 +3,15 @@ package router
 import (
 	"context"
 	"go-hris/helper"
-	"go-hris/middleware"
 	"go-hris/service/jenis_kelamin/repository"
 	"go-hris/service/jenis_kelamin/service"
 	"net/http"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-var GetJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetJenisKelamin httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 	jkImpl := repository.NewJenisKelaminImpl(db)
@@ -19,25 +20,25 @@ var GetJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.Respon
 	helper.DashboardViewParser(rw, "jk_dashboard", helper.JENIS_KELAMIN, map[string]interface{}{
 		"JK": jenis_kelamin,
 	})
-}}
+}
 
-var DeleteJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	id_jenis, _ := strconv.Atoi(r.URL.Query().Get("id_jenis"))
+var DeleteJenisKelamin = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id_jenis, _ := strconv.Atoi(p.ByName("id_jenis"))
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 
 	jkImpl := repository.NewJenisKelaminImpl(db)
 	service.DeleteJenisKelaminService(id_jenis, jkImpl)
 	http.Redirect(rw, r, "/get/jenis-kelamin", http.StatusSeeOther)
-}}
+}
 
-var GetTambahJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var GetTambahJenisKelamin httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	helper.DashboardViewParser(rw, "tambah_jk", helper.JENIS_KELAMIN, map[string]interface{}{
 		"url": "/post/jenis-kelamin/tambah",
 	})
-}}
+}
 
-var PostTambahJenisKelamin middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var PostTambahJenisKelamin httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 
@@ -45,10 +46,10 @@ var PostTambahJenisKelamin middleware.Post = middleware.Post{Handler: func(rw ht
 	jenis := r.PostFormValue("jenis")
 	service.TambahJenisKelaminService(jenis, jkImpl)
 	http.Redirect(rw, r, "/get/jenis-kelamin", http.StatusSeeOther)
-}}
+}
 
-var GetUpdateJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.ResponseWriter, r *http.Request) {
-	id_jenis, _ := strconv.Atoi(r.URL.Query().Get("id_jenis"))
+var GetUpdateJenisKelamin httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id_jenis, _ := strconv.Atoi(p.ByName("id_jenis"))
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 
@@ -58,9 +59,9 @@ var GetUpdateJenisKelamin middleware.Get = middleware.Get{Handler: func(rw http.
 		"url":   "/post/jenis-kelamin/update",
 		"Jenis": jenis_kelamin,
 	})
-}}
+}
 
-var PostUpdateJenisKelamin middleware.Post = middleware.Post{Handler: func(rw http.ResponseWriter, r *http.Request) {
+var PostUpdateJenisKelamin httprouter.Handle = func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	db, err := helper.Connection()
 	helper.PanicHandler(err)
 
@@ -69,4 +70,4 @@ var PostUpdateJenisKelamin middleware.Post = middleware.Post{Handler: func(rw ht
 	jenis := r.PostFormValue("jenis")
 	service.UpdateJenisKelaminService(jkImpl, id_jenis, jenis)
 	http.Redirect(rw, r, "/get/jenis-kelamin", http.StatusSeeOther)
-}}
+}

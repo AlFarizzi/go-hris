@@ -6,74 +6,76 @@ import (
 	"go-hris/middleware"
 	"go-hris/router"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 //go:embed public
 var public embed.FS
 
 func main() {
-	mux := http.NewServeMux()
-
+	newRouter := httprouter.New()
 	// Auth
-	mux.HandleFunc("/", middleware.Guest(router.GetLogin.ServeHTTP))
-	mux.HandleFunc("/post-login", middleware.Guest(router.PostLogin.ServeHTTP))
-	mux.HandleFunc("/logout", middleware.Auth(router.Logout.ServeHTTP))
+	newRouter.GET("/", middleware.Guest(router.GetLogin))
+	newRouter.POST("/post-login", middleware.Guest(router.PostLogin))
+	newRouter.GET("/logout", middleware.Auth(router.Logout))
 
 	// Karyawan
-	mux.HandleFunc("/get/karyawan", middleware.Auth(router.GetAllUsers.ServeHTTP))
-	mux.HandleFunc("/get/karyawan/tambah", middleware.Auth(router.GetTambahKaryawan.ServeHTTP))
-	mux.HandleFunc("/post/karyawan/tambah", middleware.Auth(router.PostTambahKaryawan.ServeHTTP))
-	mux.HandleFunc("/get/karyawan/delete", middleware.Auth(router.DeleteUser.ServeHTTP))
-	mux.HandleFunc("/get/karyawan/edit", middleware.Auth(router.GetUpdateUser.ServeHTTP))
-	mux.HandleFunc("/post/karyawan/edit", middleware.Auth(router.PostUpdateUser.ServeHTTP))
+	newRouter.GET("/get/karyawan", middleware.Auth(router.GetAllUsers))
+	newRouter.GET("/get/karyawan/tambah", middleware.Auth(router.GetTambahKaryawan))
+	newRouter.POST("/post/karyawan/tambah", middleware.Auth(router.PostTambahKaryawan))
+	newRouter.GET("/get/karyawan/delete/:id_user", middleware.Auth(router.DeleteUser))
+	newRouter.GET("/get/karyawan/edit/:id_user", middleware.Auth(router.GetUpdateUser))
+	newRouter.POST("/post/karyawan/edit", middleware.Auth(router.PostUpdateUser))
 
 	// Position
-	mux.HandleFunc("/get/position", middleware.Auth(router.GetAllPosition.ServeHTTP))
-	mux.HandleFunc("/get/position/tambah", middleware.Auth(router.GetTambahPosisi.ServeHTTP))
-	mux.HandleFunc("/post/position/tambah", middleware.Auth(router.PostTambahPosisi.ServeHTTP))
-	mux.HandleFunc("/get/position/delete", middleware.Auth(router.DeletePosition.ServeHTTP))
-	mux.HandleFunc("/get/positions/members", middleware.Auth(router.GetPositionMembers.ServeHTTP))
-	mux.HandleFunc("/get/positions/update", middleware.Auth(router.GetUpdatePosition.ServeHTTP))
-	mux.HandleFunc("/post/positions/update", middleware.Auth(router.PostUpdatePosition.ServeHTTP))
+	newRouter.GET("/get/position", middleware.Auth(router.GetAllPosition))
+	newRouter.GET("/get/position/tambah", middleware.Auth(router.GetTambahPosisi))
+	newRouter.POST("/post/position/tambah", middleware.Auth(router.PostTambahPosisi))
+	newRouter.GET("/get/position/delete/:id_position", middleware.Auth(router.DeletePosition))
+	newRouter.GET("/get/positions/members/:id_position", middleware.Auth(router.GetPositionMembers))
+	newRouter.GET("/get/positions/update/:id_position", middleware.Auth(router.GetUpdatePosition))
+	newRouter.POST("/post/positions/update", middleware.Auth(router.PostUpdatePosition))
 
 	// Hubungan Keluarga
-	mux.HandleFunc("/get/hubungan-keluarga", middleware.Auth(router.GetHubunganKeluaga.ServeHTTP))
-	mux.HandleFunc("/get/hubungan-keluarga/delete", middleware.Auth(router.DeleteHubunganKeluarga.ServeHTTP))
-	mux.HandleFunc("/get/hubungan-keluarga/tambah", middleware.Auth(router.GetTambahHubunganKeluarga.ServeHTTP))
-	mux.HandleFunc("/post/hubungan-keluarga/tambah", middleware.Auth(router.PostTambahHubunganKelurga.ServeHTTP))
-	mux.HandleFunc("/get/hubungan-keluarga/update", middleware.Auth(router.GetUpdateHubunganKeluarga.ServeHTTP))
-	mux.HandleFunc("/post/hubungan-keluarga/update", middleware.Auth(router.PostUpdateHubunganKeluarga.ServeHTTP))
+	newRouter.GET("/get/hubungan-keluarga", middleware.Auth(router.GetHubunganKeluaga))
+	newRouter.GET("/get/hubungan-keluarga/delete/:id_hubungan", middleware.Auth(router.DeleteHubunganKeluarga))
+	newRouter.GET("/get/hubungan-keluarga/tambah", middleware.Auth(router.GetTambahHubunganKeluarga))
+	newRouter.POST("/post/hubungan-keluarga/tambah", middleware.Auth(router.PostTambahHubunganKelurga))
+	newRouter.GET("/get/hubungan-keluarga/update/:id_hubungan", middleware.Auth(router.GetUpdateHubunganKeluarga))
+	newRouter.POST("/post/hubungan-keluarga/update", middleware.Auth(router.PostUpdateHubunganKeluarga))
 
 	// Jenis Kelamin
-	mux.HandleFunc("/get/jenis-kelamin", middleware.Auth(router.GetJenisKelamin.ServeHTTP))
-	mux.HandleFunc("/get/jenis-kelamin/delete", middleware.Auth(router.DeleteJenisKelamin.ServeHTTP))
-	mux.HandleFunc("/get/jenis-kelamin/tambah", middleware.Auth(router.GetTambahJenisKelamin.ServeHTTP))
-	mux.HandleFunc("/post/jenis-kelamin/tambah", middleware.Auth(router.PostTambahJenisKelamin.ServeHTTP))
-	mux.HandleFunc("/get/jenis-kelamin/update", middleware.Auth(router.GetUpdateJenisKelamin.ServeHTTP))
-	mux.HandleFunc("/post/jenis-kelamin/update", middleware.Auth(router.PostUpdateJenisKelamin.ServeHTTP))
+	newRouter.GET("/get/jenis-kelamin", middleware.Auth(router.GetJenisKelamin))
+	newRouter.GET("/get/jenis-kelamin/delete/:id_jenis", middleware.Auth(router.DeleteJenisKelamin))
+	newRouter.GET("/get/jenis-kelamin/tambah", middleware.Auth(router.GetTambahJenisKelamin))
+	newRouter.POST("/post/jenis-kelamin/tambah", middleware.Auth(router.PostTambahJenisKelamin))
+	newRouter.GET("/get/jenis-kelamin/update/:id_jenis", middleware.Auth(router.GetUpdateJenisKelamin))
+	newRouter.POST("/post/jenis-kelamin/update", middleware.Auth(router.PostUpdateJenisKelamin))
 
 	// Status Pernikahan
-	mux.HandleFunc("/get/status-pernikahan", middleware.Auth(router.GetStatusPernikahan.ServeHTTP))
-	mux.HandleFunc("/get/status-pernikahan/delete", middleware.Auth(router.DeleteStatusPernikahan.ServeHTTP))
-	mux.HandleFunc("/get/status-pernikahan/tambah", middleware.Auth(router.GetTambahStatusPernikahan.ServeHTTP))
-	mux.HandleFunc("/post/status-pernikahan/tambah", middleware.Auth(router.PostTambahStatusPernikahan.ServeHTTP))
-	mux.HandleFunc("/get/status-pernikahan/update", middleware.Auth(router.GetUpdateStatusPernikahan.ServeHTTP))
-	mux.HandleFunc("/post/status-pernikahan/update", middleware.Auth(router.PostUpdateStatusPernikahan.ServeHTTP))
+	newRouter.GET("/get/status-pernikahan", middleware.Auth(router.GetStatusPernikahan))
+	newRouter.GET("/get/status-pernikahan/delete/:id_status", middleware.Auth(router.DeleteStatusPernikahan))
+	newRouter.GET("/get/status-pernikahan/tambah", middleware.Auth(router.GetTambahStatusPernikahan))
+	newRouter.POST("/post/status-pernikahan/tambah", middleware.Auth(router.PostTambahStatusPernikahan))
+	newRouter.GET("/get/status-pernikahan/update/:id_status", middleware.Auth(router.GetUpdateStatusPernikahan))
+	newRouter.POST("/post/status-pernikahan/update", middleware.Auth(router.PostUpdateStatusPernikahan))
 
 	// Family
-	mux.HandleFunc("/post/family/tambah", middleware.Auth(router.PostFamily.ServeHTTP))
-	mux.HandleFunc("/get/family/delete", middleware.Auth(router.DeleteFamily.Handler.ServeHTTP))
-	mux.HandleFunc("/get/family/update", middleware.Auth(router.GetUpdateFamily.ServeHTTP))
-	mux.HandleFunc("/post/family/update", middleware.Auth(router.PostFamilyUpdate.ServeHTTP))
+	newRouter.POST("/post/family/tambah", middleware.Auth(router.PostFamily))
+	newRouter.GET("/get/family/delete/:id_family/:id_user", middleware.Auth(router.DeleteFamily))
+	newRouter.GET("/get/family/update/:id_family", middleware.Auth(router.GetUpdateFamily))
+	newRouter.POST("/post/family/update", middleware.Auth(router.PostFamilyUpdate))
 
 	// Payroll Component
-	mux.HandleFunc("/get/payroll-component", middleware.Auth(router.GetPayrollComponents.ServeHTTP))
-	mux.HandleFunc("/get/payroll-component/delete", middleware.Auth(router.DeletePayrollComponent.ServeHTTP))
-	mux.HandleFunc("/get/payroll-component/tambah", middleware.Auth(router.GetTambahPayrollComponent.ServeHTTP))
-	mux.HandleFunc("/post/payroll-component/tambah", middleware.Auth(router.PostTambahPayrollComponent.ServeHTTP))
-	mux.HandleFunc("/get/payroll-component/update", middleware.Auth(router.GetUpdatePayrollComponent.ServeHTTP))
-	mux.HandleFunc("/post/payroll-component/update", middleware.Auth(router.PostUpdatePayrollComponent.ServeHTTP))
+	newRouter.GET("/get/payroll-component", middleware.Auth(router.GetPayrollComponents))
+	newRouter.GET("/get/payroll-component/delete/:id_component", middleware.Auth(router.DeletePayrollComponent))
+	newRouter.GET("/get/payroll-component/tambah", middleware.Auth(router.GetTambahPayrollComponent))
+	newRouter.GET("/post/payroll-component/tambah", middleware.Auth(router.PostTambahPayrollComponent))
+	newRouter.GET("/get/payroll-component/update/:id_component", middleware.Auth(router.GetUpdatePayrollComponent))
+	newRouter.GET("/post/payroll-component/update", middleware.Auth(router.PostUpdatePayrollComponent))
 
-	helper.StaticFile(&public, mux)
-	helper.CreateServer("localhost:8080", mux)
+	// helper.StaticFile(&public, newRouter)
+	newRouter.ServeFiles("/static/*filepath", http.FS(public))
+	helper.CreateServer("localhost:8080", newRouter)
 }

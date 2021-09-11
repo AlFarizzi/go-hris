@@ -71,9 +71,9 @@ func DeleteKaryawanService(w http.ResponseWriter, r *http.Request, id int, userI
 	http.Redirect(w, r, "/get/karyawan", http.StatusTemporaryRedirect)
 }
 
-func GetUpdateUserService(w http.ResponseWriter, r *http.Request, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository, familyImpl repository.FamilyRepository, hubunganImpl HubunganRepository.HubunganKeluargaRepository, statusImpl StatusRepository.StatusPernikahanRepository, JKImpl JKRepository.JenisKelaminRepository) {
+func GetUpdateUserService(w http.ResponseWriter, id_userP string, userImpl UserRepository.UserRepository, positionImpl PositionRepository.PositionRepository, familyImpl repository.FamilyRepository, hubunganImpl HubunganRepository.HubunganKeluargaRepository, statusImpl StatusRepository.StatusPernikahanRepository, JKImpl JKRepository.JenisKelaminRepository) {
 	var ctx = context.Background()
-	id_user, _ := strconv.Atoi(r.URL.Query().Get("id_user"))
+	id_user, _ := strconv.Atoi(id_userP)
 	var user model.User = userImpl.GetUser(ctx, &id_user)
 	var positions []model.Position = positionImpl.GetAllPositions(ctx)
 	var families []model.UserFamily = familyImpl.GetFamily(ctx, id_user)

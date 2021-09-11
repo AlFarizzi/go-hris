@@ -23,7 +23,8 @@ func PanicHandler(err error) {
 func ValidationHelper(cancel context.CancelFunc, err error) string {
 	if err != nil {
 		defer cancel()
-		for _, err := range err.(validator.ValidationErrors) {
+		errors := err.(validator.ValidationErrors)
+		for _, err := range errors {
 			errMsg := strings.Join([]string{
 				err.Field(), Message[err.Tag()].(string),
 			}, " ")
